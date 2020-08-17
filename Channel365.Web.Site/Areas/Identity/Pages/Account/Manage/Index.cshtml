@@ -1,0 +1,45 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+}
+
+<partial name="_StatusMessage" model="Model.StatusMessage" />
+
+<div class="row justify-content-around mt-5" style="text-align:center;">
+    <div class="col-md-4">
+        <a asp-controller="Upload" asp-action="Index">
+            <img src="~/pic/icon/Dropbox-icon.png" alt="" />
+            <p>Upload Video</p>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="/Identity/Account/Manage/Uploads">
+            <img src="~/pic/icon/3d_desktop_folder_20536.png" />
+            <p>My Videos</p>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a asp-controller="Playlist" asp-action="Index" asp-route-id="@Model.LoggedInUserId">
+            <img src="~/pic/icon/3d_movies_folder_20527.png" />
+            <p>Playlists</p>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a asp-controller="Subscription" asp-action="Index">
+            <img src="~/pic/icon/group_folder_20492.png" alt="" />
+            <p>Subscriptions</p>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a asp-controller="Video" asp-action="Likedvideos">
+            <img src="~/pic/icon/heart_folder_20491.png" />
+            <p>Liked videos</p>
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

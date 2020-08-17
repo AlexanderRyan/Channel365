@@ -1,0 +1,106 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - Channel365</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <script src="https://kit.fontawesome.com/63a4805453.js" crossorigin="anonymous" defer></script>
+    <link href='https://fonts.googleapis.com/css?family=Monoton' rel='stylesheet'>
+    <link rel="shortcut icon" href="~/pic/c365.png" type="image/x-icon">
+
+    <style>
+        #admin-nav {
+            transition: top 0.3s;
+        }
+
+        .hide {
+            /* Hides searchbar on the Dashboard */
+            display: none !important;
+        }
+
+        #goto-top {
+            display: none;
+            position: fixed;
+            bottom: 50px;
+            right: 75px;
+            color: darkorange;
+        }
+    </style>
+
+</head>
+<body>
+    <nav id="admin-nav" class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" asp-area="Admin" asp-page="/Index">Administration</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item dropdown active">
+                    <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Manage</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        <a class="dropdown-item" asp-page="/Videos/Manage">Videos</a>
+                        <a class="dropdown-item" asp-page="/Users/Manage">Users</a>
+                        <a class="dropdown-item" asp-page="/Playlists/Manage">Playlists</a>
+                    </div>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input id="admin-search" class="form-control mr-sm-5 hide" type="text" placeholder="Search" aria-label="Search">
+            </form>
+            <a asp-controller="Home" asp-action="Index"><img src="~/pic/c365.png" title="Back to Main Page" width="50" height="50" /></a>
+        </div>
+    </nav>
+
+    <main role="main" class="container">
+        @RenderBody()
+    </main>
+
+    <a id="goto-top" href="#" title="Back to top">
+        <svg class="bi bi-arrow-bar-up" width="3em" height="3em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M11.354 5.854a.5.5 0 000-.708l-3-3a.5.5 0 00-.708 0l-3 3a.5.5 0 10.708.708L8 3.207l2.646 2.647a.5.5 0 00.708 0z" clip-rule="evenodd" />
+            <path fill-rule="evenodd" d="M8 10a.5.5 0 00.5-.5V3a.5.5 0 00-1 0v6.5a.5.5 0 00.5.5zm-4.8 1.6c0-.22.18-.4.4-.4h8.8a.4.4 0 010 .8H3.6a.4.4 0 01-.4-.4z" clip-rule="evenodd" />
+        </svg>
+    </a>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        var prevScrollpos = window.pageYOffset;
+
+        window.onscroll = function () {
+            var currentScrollPos = window.pageYOffset;
+
+            if (prevScrollpos > currentScrollPos) {
+                $("#admin-nav").css('top', '0');
+            }
+            else {
+                $("#admin-nav").css('top', '-75px');
+            }
+            prevScrollpos = currentScrollPos;
+        };
+
+        $(window).scroll(function () {
+            if ($(this).scrollTop() > 350) {
+                $('#goto-top').fadeIn();
+            }
+            else {
+                $('#goto-top').fadeOut();
+            }
+        });
+
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        })
+    </script>
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

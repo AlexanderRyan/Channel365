@@ -1,0 +1,67 @@
+﻿@model Channel365.Data.Entities.ApplicationUser
+
+<div class="row channel-header">
+    <div class="col ch-nav video-nav">
+        <h1><a asp-controller="Channel" asp-action="Videos" asp-route-id="@Model.Id">Videos</a></h1>
+    </div>
+    <div class="col ch-nav playlist-nav">
+        <h1><a asp-controller="Channel" asp-action="Playlists" asp-route-id="@Model.Id">Playlists</a></h1>
+    </div>
+    <div class="col ch-nav subscriber-nav">
+        <h1><a asp-controller="Channel" asp-action="Subscriptions" asp-route-id="@Model.Id">Subscriptions</a></h1>
+    </div>
+</div>
+
+<hr />
+
+<style>
+    hr {
+        border-color: orange;
+    }
+    .channel-container {
+        overflow: hidden;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .channel-header {
+        text-align: center;
+        margin: 0;
+    }
+
+    .ch-nav {
+        background-color: #c08211;
+        padding: 0;
+    }
+        .ch-nav h1 a {
+            color: #242526;
+        }
+
+    .active {
+        background-color: inherit;
+    }
+        .active h1 a {
+            color: #c08211;
+        }
+
+    .channel-content div img {
+        width: 100%;
+        height: 60%;
+    }
+
+    .ch365-card {
+        background-color: #FFD7BE;
+        box-shadow: 0 10px 20px black, 0 6px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+        margin: 15px;
+        width: 15rem;
+    }
+
+        .ch365-card:hover {
+            box-shadow: 1px 8px 20px rgba(1, 0, 1, 0.55);
+        }
+
+    .video-card {
+        border-top: 5px solid #95977a;
+        padding-left: 10px;
+    }
+</style>

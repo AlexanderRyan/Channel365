@@ -1,0 +1,97 @@
+﻿@model Channel365.Data.Entities.ApplicationUser
+@{
+    ViewData["Title"] = "Subscriptions";
+}
+
+<h1 class="pb-5 text-center text-md-left">
+    <a title="Go back" asp-controller="Subscription" asp-action="Index">
+        <small class="text-danger">
+            <svg class="bi bi-arrow-return-left" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M5.854 5.646a.5.5 0 0 1 0 .708L3.207 9l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0z" />
+                <path fill-rule="evenodd" d="M13.5 2.5a.5.5 0 0 1 .5.5v4a2.5 2.5 0 0 1-2.5 2.5H3a.5.5 0 0 1 0-1h8.5A1.5 1.5 0 0 0 13 7V3a.5.5 0 0 1 .5-.5z" />
+            </svg>
+        </small>
+    </a>
+    @(Model.Followings.Count == 0 ? "You're not subscribed to anyone!" : "Your subscriptions" )
+</h1>
+<div class="row appendage">
+    @foreach (var user in Model.Followings)
+    {
+        @if (user.Follow == true)
+        {
+            <div id="@user.Target.Id" class="col-lg-2 col-md-4 col-sm-12 mr-1 text-center">
+                <div class="sub-card">
+                    <a class="unsub-btn badge badge-danger">Unsubscribe</a>
+                    <input class="channelId" type="hidden" value="@user.Target.Id" />
+                    <img class="rounded-circle" src="@user.Target.UserImageUrl" alt="Profile picture" width="75" height="75">
+                </div>
+                <h4>@user.Target.UserName</h4>
+                <a class="btn btn-sm btn-outline-light" asp-controller="Channel" asp-action="Index" asp-route-id="@user.Target.Id">Go to Channel »</a>
+            </div>
+        }
+    }
+</div>
+
+@Html.AntiForgeryToken()
+
+<style>
+    .sub-card {
+        position: relative;
+        max-width: 75px;
+        margin: 0 auto;
+        transition: all .3s ease-in;
+    }
+
+        .sub-card:hover .unsub-btn {
+            opacity: 1;
+            right: -70px;
+        }
+
+    .unsub-btn {
+        position: absolute;
+        opacity: 0;
+        top: 30px;
+        right: 0px;
+        transition: all .15s cubic-bezier(.66,.51,.67,1.2);
+        z-index: 0;
+        cursor: pointer;
+    }
+
+        .unsub-btn:hover {
+            opacity: 1;
+            right: -70px;
+        }
+</style>
+
+@section Scripts {
+    <script>
+
+    $(function () {
+        let rvt = $('input[name="__RequestVerificationToken"]').val();
+
+        $('.unsub-btn').click(function () {
+            let channelId = $(this).siblings('.channelId').val();
+            let channel = $('#' + channelId);
+
+            $.post(
+                '/Subscription/Subscribe',
+                {
+                    __RequestVerificationToken: rvt,
+                    targetId: channelId
+                },
+                function (response) {
+
+                    switch (response) {
+                        case '204':
+                            channel.fadeOut(200, () => {
+                                channel.remove();
+                            });
+                            break;
+                    }
+                }
+            );
+        });
+    });
+
+    </script>
+}

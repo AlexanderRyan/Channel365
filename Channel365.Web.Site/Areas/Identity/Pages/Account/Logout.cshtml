@@ -1,0 +1,61 @@
+﻿@page
+@model LogoutModel
+@{
+    ViewData["Title"] = "Log out";
+}
+
+@*<div class="log-out text-center">
+        <img id="bg" src="@Url.Content("~/pic/LogOut/loggedOut.png")" />
+        <header>
+            <h1 style="color:orange" class="navbar-brand">@ViewData["Title"]</h1>
+
+            <h3>See you later!</h3>
+            <p>You have successfully logged out of the application.</p>
+        </header>
+
+        <a type="button" id="logoutButton" class="btn btn-outline-light" asp-area="Identity" asp-page="/Account/Login">
+
+            Login
+        </a>
+        <a asp-area="" asp-controller="Home" asp-action="Index"><h6>or back Home</h6></a>
+    </div>*@  
+ <div class="log-out">
+    <img id="bg" src="@Url.Content("~/pic/LogOut/loggedOut.png")" />
+    <header>
+        <h1 style="color:orange" >See you later!</h1>
+        <p>You have successfully logged out of the application.</p>
+
+    </header>
+
+    <img id="log-out-img" src="https://i.giphy.com/media/hQK8PNh3AiqcRpwakM/giphy.webp" onerror="this.onerror=null;this.src='https://i.giphy.com/hQK8PNh3AiqcRpwakM.gif';" alt="">
+</div>
+
+
+<style>
+
+    .log-out {
+        text-shadow: 2px 2px 1px rgba(150, 150, 150, 1);
+    }
+
+    #bg {
+        position: absolute;
+        left: 0;
+        z-index: -1;
+    }
+
+    #log-out-img {
+        position: relative;
+        left: 476px;
+        top: -55px;
+        max-width: 27.2rem;
+    }
+
+    #logoutButton {
+        height: 50px;
+        width: 180px;
+    }
+
+    h6 {
+        padding-top: 40px;
+    }
+</style>

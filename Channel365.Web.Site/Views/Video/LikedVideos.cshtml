@@ -1,0 +1,167 @@
+﻿@model Channel365.Data.Entities.ApplicationUser
+@{
+    ViewData["Title"] = "LikedVideos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* --  Liked videos  -- *@
+    <div class="row">
+
+        <div class="col liked-list">
+            <h2 style="color:orange; font-family:monoton;" class="text-center">Videos &nbsp; you &nbsp; liked &nbsp;<i class="far fa-thumbs-up"></i></h2>
+            <br />
+            <h5 id="no-likes" class="text-center">
+                @(Model.Likes == 0 ? "No videos liked, yet!" : "" )
+            </h5>
+
+            <ol id="liked-content">
+                @foreach (var video in Model.LikesAndDislikes)
+                {
+                    if (video.Like == true)
+                    {
+                        <li id="@video.VideoId" class="liked-item py-1">
+                            <div class="row border-bottom py-2">
+
+                                <div class="col"><a asp-controller="Video" asp-action="Video" asp-route-id="@video.Video.VideoId"><img src="@video.Video.VideoImage" class="img-fluid" /></a></div>
+
+                                <div class="col-8">
+                                    <div>
+                                        <b>
+                                            <a asp-controller="Video" asp-action="Video" asp-route-id="@video.Video.VideoId">@video.Video.VideoTitle</a>
+</b>
+                                    </div>
+                                    <p>
+                                        <a asp-controller="Channel" asp-action="Index" asp-route-id="@video.Video.ApplicationUser.Id">@video.Video.ApplicationUser.UserName</a>
+                                    </p>
+                                </div>
+
+                                <div class="col">
+                                    <form>
+                                        <div class="rm-like">
+                                            <button class="remove-like btn btn-outline-light"><i class="fas fa-trash-alt"></i></button>
+                                            <input class="vid-id-storage" type="hidden" name="videoId" value="@video.VideoId" />
+                                            <input type="hidden" name="like" value="true" />
+                                        </div>
+                                    </form>
+
+                                </div>
+
+                            </div>
+                        </li>
+                    }
+                }
+            </ol>
+        </div>
+
+        <div class="col-1 text-center">
+            <a href="/Identity/Account/Manage" class="btn btn-sm btn-outline-info border-bottom-0 border-top-0">Go Back</a>
+        </div>
+
+@* --  Disliked videos  -- *@
+        <div class="col disliked-list">
+            <h2 style="color:orange; font-family:monoton;" class="text-center">Videos &nbsp; you &nbsp; disliked &nbsp;<i class="far fa-thumbs-down"></i></h2>
+            <br />
+
+            <h5 id="no-dislikes" class="text-center">
+                @(Model.Dislikes == 0 ? "Nothing disliked, yet..." : "" )
+            </h5>
+
+            <ol id="disliked-content">
+                @foreach (var video in Model.LikesAndDislikes)
+                {
+                    if (video.Like == false)
+                    {
+                        <li id="@video.VideoId" class="liked-item py-1">
+                            <div class="row border-bottom py-2">
+
+                                <div class="col"><a asp-controller="Video" asp-action="Video" asp-route-id="@video.Video.VideoId"><img src="@video.Video.VideoImage" class="img-fluid" /></a></div>
+
+                                <div class="col-8">
+                                    <div><b>@video.Video.VideoTitle</b></div>
+                                    <p>@video.Video.ApplicationUser.UserName</p>
+                                </div>
+
+                                <div class="col">
+                                    <form>
+                                        <div class="rm-like">
+                                            <button class="remove-like btn btn-outline-light"><i class="fas fa-trash-alt"></i></button>
+                                            <input class="vid-id-storage" type="hidden" name="videoId" value="@video.VideoId" />
+                                            <input type="hidden" name="like" value="true" />
+                                        </div>
+                                    </form>
+
+                                </div>
+
+                            </div>
+                        </li>
+                    }
+                }
+            </ol>
+        </div>
+    </div>
+@Html.AntiForgeryToken()
+
+<style>
+    li {
+        list-style: none;
+        transition: all .2s ease-out;
+    }
+
+</style>
+
+@section Scripts {
+<script>
+    $(function () {
+        let rvt = $('input[name="__RequestVerificationToken"]').val();
+
+        $(".rm-like").on('click', '.remove-like', function (e) {
+            e.preventDefault();
+
+            let videoId = $(this).siblings('.vid-id-storage').val();
+            let content = $('#'+videoId);
+
+            RemoveElement(content);
+            
+            $.post(
+                '/Video/RemoveLike',
+                {
+                    __RequestVerificationToken: rvt,
+                    videoId: videoId
+                },
+                function (response) {
+                   
+
+                    RemoveElement(content);
+                    setTimeout(() => {
+
+                        console.log($('#disliked-content li').length);
+                        console.log($('#liked-content li').length);
+
+
+
+                        if ($('#disliked-content li').length === 0) {
+                            console.log("Nothing disliked");
+                            $('#no-dislikes').text("Nothing disliked, yet...");
+                        }
+                        if ($('#liked-content li').length === 0) {
+                            console.log("Nothing liked");
+                            $('#no-likes').text("No videos liked, yet!");
+                        }
+
+                    }, 500)
+
+                }
+            );
+
+        });
+
+        function RemoveElement(element) {
+            element.slideUp(250, () => {
+                element.remove();
+            });
+        }
+
+    });
+</script>
+
+}

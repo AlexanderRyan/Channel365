@@ -1,0 +1,474 @@
+﻿body {
+    background-color: #181818;
+    color: white;
+}
+
+html, body {
+    margin: 0px;
+    padding: 0px;
+}
+
+.container-fluid {
+    padding: 0px;
+}
+/* The sidebar menu */
+.sidenav {
+    height: 80%; /* Full-height: remove this if you want "auto" height */
+    width: 250px; /* Set the width of the sidebar */
+    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+    z-index: 1; /* Stay on top */
+    top: 26px; /* Stay at the top */
+    left: 0;
+    background-color: #1b1c1d;
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 20px;
+}
+
+    /* The navigation menu links */
+    .sidenav a {
+        /*padding: 6px 8px 6px 16px;*/
+        text-decoration: none;
+        font-size: 15px;
+        color: white;
+        display: block;
+    }
+
+        /* When you mouse over the navigation links, change their color */
+        .sidenav a:hover {
+            color: #a3a4a7;
+        }
+/* Style page content */
+.main {
+    margin-left: 160px; /* Same as the width of the sidebar */
+    padding: 0px 10px;
+    text-align: center;
+}
+
+/* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
+@media screen and (max-height: 450px) {
+    .sidenav {
+        padding-top: 35px;
+        margin-top: 40px;
+    }
+
+        .sidenav a {
+            font-size: 18px;
+        }
+}
+    .navbar-color {
+    background-color: black;
+}
+
+.navbar-search {
+    background-color: black;
+}
+
+.fab {
+    color: white;
+    margin-left: 130px;
+}
+
+.navbar-brand {
+    padding-left: 5px;
+    font-family: Monoton;
+    color: gray;
+    font-size: 2rem;
+}
+
+a.navbar-brand {
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
+}
+
+/* Provide sufficient contrast against dark background */
+a {
+    color: white; /* Ursprungligen satt till black för kontrast mot vit bakgrund */
+}
+    a:hover {
+      text-decoration: none;
+      color: lightgray;
+    }
+
+.btn-primary {
+    color: black;
+    background-color: white;
+    border-color: black;
+}
+.btn-primary:hover {
+    background-color: gray;
+    color: black;
+    border-color: mediumpurple;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    color: #fff;
+    background-color: #242526;
+    border-color: #1861ac;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.border-top {
+    border-top: 1px solid #e5e5e5; /* Denna står för de vita kanterna för en borders topp */
+}
+
+.border-bottom {
+    border-bottom: 1px solid #e5e5e5; /* Denna står för de vita kanterna för en borders botten */
+}
+
+.box-shadow {
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy {
+    font-size: 1rem;
+    line-height: inherit;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    position: relative;
+    min-height: 100%;
+    width: 100%;
+}
+
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+}
+
+.foot-text {
+    color: white;
+    text-align: center;
+}
+
+.footer {
+    text-align: center;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px; /* Vertically center the text there */
+    background-color: black;
+}
+
+
+/* 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    MANUALLY ADDED CSS BELOW 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+
+
+
+
+.carousel-control-next, .carousel-control-prev{
+    height: 30px;
+    width: 30px;
+    margin-top: 100px;
+}
+
+.videoInfo{
+    margin-left: 200px;
+    margin-top: 50px;
+}
+
+#showVideoButton {
+
+    background: rgba(255,175,75,1);
+    background: -moz-linear-gradient(left, rgba(255,175,75,1) 0%, rgba(255,146,10,1) 100%);
+    background: -webkit-gradient(left top, right top, color-stop(0%, rgba(255,175,75,1)), color-stop(100%, rgba(255,146,10,1)));
+    background: -webkit-linear-gradient(left, rgba(255,175,75,1) 0%, rgba(255,146,10,1) 100%);
+    background: -o-linear-gradient(left, rgba(255,175,75,1) 0%, rgba(255,146,10,1) 100%);
+    background: linear-gradient(to right, rgba(255,175,75,1) 0%, rgba(255,146,10,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffaf4b', endColorstr='#ff920a', GradientType=1 );
+   
+}
+
+#heroDescription {
+
+    color: #ffcd70;
+}
+
+#heroTitle {
+
+    color: #ffcd70;
+}
+
+.videoTextColor {
+    color: #ffcd70;
+}
+
+#videoDescriptionColor {
+    color: #776544;
+    width: 50px;
+}
+
+.videoImages {
+    border-style: solid;
+    border-radius: 3px;
+    border-width: 1px;
+    box-shadow: 0 0 3px 3px #868484;
+    border-color: black;
+}
+
+    .videoImages:hover {
+        outline: 100px solid rgba(189, 216, 242, 0.2) !important;
+        outline-offset: -100px;
+        transform: scale(1.1);
+    }
+
+
+/*  --- Start of Sidebar at _Layout --- */
+
+.clearfix {
+    zoom: 1;
+}
+
+    .clearfix:after {
+        clear: both;
+    }
+
+.list-item {
+    background: #000;
+    color: #575757;
+    text-align: center;
+    height: 3em;
+    width: 4em;
+    line-height: 2.5em;
+    border-bottom: 1px solid #060606;
+    position: relative;
+    display: block;
+    text-decoration: none;
+    box-shadow: -1em 1.5em 1em #2d2929; /* previou color: #141517 */
+    -webkit-transition: all .25s linear;
+    transition: all .25s linear;
+}
+
+    .list-item:hover {
+        background: black;
+        color: #fffcfb;
+        -webkit-transform: translate(0.9em, -0.9em);
+        transform: translate(0.9em, -0.9em);
+        -webkit-transition: all .25s linear;
+        transition: all .25s linear;
+        box-shadow: -2em 2em 1em #2d2929; /*previous color: #e1e1e1 */
+        /*box-shadow: 0 0 3px 3px #868484;*/
+    }
+
+        .list-item:hover:before, .list-item:hover:after {
+            -webkit-transition: all .25s linear;
+            transition: all .25s linear;
+        }
+
+        .list-item:hover:before {
+            background: #ed6e00; /* sidan efter  */
+            width: 1em;
+            top: .5em;
+            left: -1em;
+        }
+
+        .list-item:hover:after {
+            background: #ed6e00; /* nere efter  */
+            width: 1em;
+            bottom: -2.5em;
+            left: 1em;
+            height: 4em;
+        }
+
+    .list-item:before, .list-item:after {
+        content: '';
+        position: absolute;
+        -webkit-transition: all .25s linear;
+        transition: all .25s linear;
+        width: .5em;
+    }
+
+    .list-item:after {
+        height: 4em;
+        background: #feaa57; /* nere innan  */
+        bottom: -2.25em;
+        left: 1.5em;
+        -webkit-transform: rotate(90deg) skew(0, 45deg);
+        transform: rotate(90deg) skew(0, 45deg);
+    }
+
+    .list-item:before {
+        height: 3em; /*  2,5   */
+        background: #eda65f; /*  sidan innan  */
+        top: .25em;
+        left: -.5em;
+        -webkit-transform: skewY(-45deg);
+        transform: skewY(-45deg);
+    }
+    .sidebar-nav {
+        display:inline-block;    
+    }
+    .sidebar-list {
+        list-style:none;
+        padding: 10px;                                                   /* PADDING 0px*/
+    }
+
+/*  --- End of Sidebar at _Layout --- */
+
+/* --- Views/Search/Index.cshtml -- */
+
+.icon-wrap {
+    position: relative;
+    width: 5.5rem;
+}
+
+#filter-container-btn {
+    width: 100%;
+    text-align: left;
+}
+
+.icon-wrap .filter-icon {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    transition: linear all 0.05s;
+}
+
+    .icon-wrap .filter-icon.hidden {
+        opacity: 0;
+    }
+
+.filter-btn {
+    border-radius: 10rem;
+    line-height: 1;
+    font-size: 75%;
+    padding: .25em .4em;
+    padding-left: .6em;
+    padding-right: .6em;
+}
+
+.search-word {
+    font-weight: bold;
+}
+
+.card-header {
+    background-color: rgb(61, 64, 67);
+    color: white;
+    text-align: center;
+}
+
+/* --- End of Index.cshtml --- */
+
+/* --- Areas/... /Manage/Settings.cshtml --- */
+
+.settings-navbar h1 {
+    cursor: pointer;
+    padding-left: 10px;
+}
+
+.settings-nav-item {
+    color: lightgrey;
+    transition: border-radius 0.2s ease-out, background-color 0.175s linear, color 0.125s linear;
+}
+
+    .settings-nav-item:hover {
+        color: dimgrey;
+        background-color: lightgrey;
+    }
+
+.item-active {
+    background-color: #3d4043;
+    color: white;
+    border-radius: 10px 0 0 10px;
+}
+
+    .item-active:hover {
+        background-color: #616467;
+        color: white;
+    }
+
+.settings-page-separator {
+    margin-top: 0;
+}
+
+.content-info {
+    display: block;
+}
+
+.content-hidden {
+    display: none;
+}
+/* --- End of Settings.cshtml --- */
+
+
+
+#profileImage {
+    width: 80px;
+    border-radius: 50%;
+}
+
+#postedOn {
+    margin-top: 25px;
+    font-weight: 100;
+    color: grey;
+    font-size: 15px;
+}
+
+.chat-body {
+    background-color: #3d3d3d;
+    border-radius: 5px;
+}
+
+.send-message {
+    background-color: #5d5b57;
+    color: #c8ad76;
+    border-radius: 10px;
+    border-style: none;
+    width: 70px;
+    height: 40px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#message-input{
+    background-color: grey;
+    border-style: none;
+}
+
+.like-dislike {
+ 
+    font-weight: 400;
+}
+
+.video-image{
+    width: 1335px;
+    height: 500px;
+}
+
+.video-title{
+   
+    font-weight: bold;
+}
+
+.video-created{
+    color: grey;
+    font-weight: 200;
+}
+
+.video-description {
+    margin-top: 30px;
+    height: 100px;
+    border-bottom: 1px;
+    border-top: 1px;
+    border-top-style: solid;
+    border-bottom-style: solid;
+    margin-bottom: 60px;
+}
+

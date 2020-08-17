@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Data\Migrations\20200407013014_AddedModelsV112.cs" />
+    <Compile Remove="Data\Migrations\20200407013014_AddedModelsV112.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200413232515_DropCommentTb.cs" />
+    <Compile Remove="Data\Migrations\20200413232515_DropCommentTb.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200413232633_DropCommentTb.cs" />
+    <Compile Remove="Data\Migrations\20200413232633_DropCommentTb.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200414004418_test1.cs" />
+    <Compile Remove="Data\Migrations\20200414004418_test1.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200416174720_ReplacedVideoID.cs" />
+    <Compile Remove="Data\Migrations\20200416174720_ReplacedVideoID.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200419172011_AddVideoControllerAndComments.cs" />
+    <Compile Remove="Data\Migrations\20200419172011_AddVideoControllerAndComments.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200419175358_AddCommentsToVideo.cs" />
+    <Compile Remove="Data\Migrations\20200419175358_AddCommentsToVideo.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200419180016_AddAbilityToCommentOnVideo.cs" />
+    <Compile Remove="Data\Migrations\20200419180016_AddAbilityToCommentOnVideo.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200429232140_AddLikeAndDislike.cs" />
+    <Compile Remove="Data\Migrations\20200429232140_AddLikeAndDislike.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200504135640_DbUpdate452020.cs" />
+    <Compile Remove="Data\Migrations\20200504135640_DbUpdate452020.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200508020946_VideoUpload3.cs" />
+    <Compile Remove="Data\Migrations\20200508020946_VideoUpload3.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200508104938_AppUser.cs" />
+    <Compile Remove="Data\Migrations\20200508104938_AppUser.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200513004243_removed_vidlang.cs" />
+    <Compile Remove="Data\Migrations\20200513004243_removed_vidlang.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="3.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.2" />
+  </ItemGroup>
+
+</Project>

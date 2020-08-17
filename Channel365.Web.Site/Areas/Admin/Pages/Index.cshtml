@@ -1,0 +1,115 @@
+﻿@page
+@model Channel365.Web.Areas.Admin.Pages.IndexModel
+@{
+}
+
+
+<div class="starter-template">
+    <h1 class="admin-link">Admin Dashboard</h1>
+    <p class="lead d-none d-md-block">
+        View and manage the sites content from here.
+    </p>
+</div>
+<div class="row">
+    <div class="col content-container admin-link">
+        <h2><a asp-area="Admin" asp-page="/Videos/Manage">Videos</a></h2>
+        <p>Most recent uploads</p>
+
+        <div class="row box video-box">
+            @foreach (var video in Model.Videos)
+            {
+                <a asp-area="Admin" asp-page="/Videos/Manage" asp-fragment="@video.VideoId">
+                    <div class="col">
+                        <img class="vid-img" src="@video.VideoImage" />
+                        <p>@video.VideoTitle</p>
+                    </div>
+                </a>
+            }
+        </div>
+
+    </div>
+
+    <div class="col-12 content-container admin-link">
+        <h2><a asp-area="Admin" asp-page="/Users/Manage">Users</a></h2>
+        <p>Most recent registered users</p>
+
+        <div class="row box user-box ">
+            @foreach (var user in Model.Users)
+            {
+                <a asp-area="Admin" asp-page="/Users/Manage" asp-fragment="@user.Id">
+                    <div class="col">
+                        <img class="user-img" src="@user.UserImageUrl" alt="profile picture" />
+                        <p>@user.UserName</p>
+                    </div>
+                </a>
+            }
+        </div>
+
+    </div>
+
+    <div class="col-12 content-container admin-link">
+        <h2><a asp-area="Admin" asp-page="/Playlists/Manage">Playlists</a></h2>
+        <p>Most recent created playlists</p>
+
+        <div class="row box playlist-box ">
+            @foreach (var playlist in Model.Playlists)
+            {
+                <a asp-area="Admin" asp-page="/Playlists/Manage" asp-fragment="@playlist.PlaylistId">
+                    <div class="col">
+                        <h3>@playlist.PlaylistName</h3>
+                        <img class="playlists-img" src="@Url.Content("~/pic/placeholder/playlist_cover.png")" alt="Video Thumbnail" />
+                        <p>@playlist.VideosInPlaylists.Count() Videos.</p>
+                    </div>
+                </a>
+            }
+        </div>
+
+    </div>
+</div>
+
+
+<style>
+    body {
+        padding-top: 5rem;
+    }
+
+    .starter-template {
+        padding: 3rem 1.5rem;
+        text-align: center;
+    }
+
+    .content-container {
+        margin-bottom: 50px;
+    }
+
+    .box {
+        border-top: 1px solid dimgrey;
+        border-bottom: 1px solid dimgrey;
+        padding-top: 15px;
+    }
+
+    .vid-img {
+        /*width: 225px;*/
+        height: 125px;
+    }
+
+    .user-img {
+        /*width: 125px;*/
+        height: 125px;
+    }
+
+    .playlists-img {
+        /*width: 200px;*/
+        height: 100px;
+    }
+
+    .admin-link {
+        color: orange;
+        border-color: black;
+        text-shadow: 2px 2px 1px rgba(255, 110, 0, 0.39);
+    }
+
+        .admin-link a:hover {
+            color: orange;
+        }
+</style>

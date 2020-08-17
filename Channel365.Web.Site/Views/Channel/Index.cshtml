@@ -1,0 +1,139 @@
+﻿@model Channel365.Data.Entities.ApplicationUser
+@{
+    ViewData["Title"] = Model.UserName;
+    
+}
+
+    <div class="channel-container">
+        <div class="bg-image">
+        </div>
+
+        <div class="user-display row justify-content-center">
+            <div class="col user-img-box">
+                <img class="user-img pt-3" src="@Model.UserImageUrl" alt="Channel/User profile picture" />
+            </div>
+            <div class="col-12">
+                <h2 class="user-name">Welcome to @Model.UserName's channel</h2>
+                @if (ViewData["Subscribed"] != null)
+                {
+                    <div id="channel-btn-box">
+                        @if ((bool)ViewData["Subscribed"] == true)
+                        {
+                            <button class="chn-sub-btn btn btn-lg btn-outline-danger d-block mt-4 mx-auto">
+                                Subscribed!
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="chn-sub-btn btn btn-lg btn-danger d-block mt-4 mx-auto">Subscribe</button>
+                        }
+                    </div>
+                }
+            </div>
+            <div class="col channel-link">
+                <h3><a asp-controller="Channel" asp-action="Videos" asp-route-id="@Model.Id">Videos</a></h3>
+            </div>
+            <div class="col channel-link">
+                <h3><a asp-controller="Playlist" asp-action="Playlists" asp-route-id="@Model.Id">Playlists</a></h3>
+            </div>
+            <div class="col channel-link">
+                <h3><a asp-controller="Subscription" asp-action="ChannelSubs" asp-route-id="@Model.Id">Subscriptions</a></h3>
+            </div>
+        </div>
+    </div>
+
+@Html.AntiForgeryToken()
+
+<style>
+    main {
+        height: 100%;
+    }
+    .channel-container{
+        height: 100%;
+    }
+    .bg-image {
+        height: 100%;
+        background-image: url("https://www.newscaststudio.com/wp-content/uploads/2019/12/classic-blue-tv.jpg"), url(../../pic/placeholder/channel_bg.jpg);
+        filter: blur(5px);
+        -webkit-filter: blur(5px);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+    .user-display{
+        position: absolute;
+        margin-left: auto;
+        margin-right: auto;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+
+    }
+    .user-img-box {
+        max-width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+    .user-img {
+        width:100%;
+    }
+    .user-name {
+        text-align: center;
+    }
+    .channel-link {
+        color: orange;
+        text-align: center;
+        border-color: black;
+        text-shadow: 2px 2px 1px rgba(255, 110, 0, 0.39);
+    }
+        .channel-link a:hover{
+            color: orange;
+        }
+
+</style>
+
+@section Scripts {
+<script>
+    $(function () {
+        let rvt = $('input[name="__RequestVerificationToken"]').val();
+        let channelId = '@Model.Id';
+        let subBtn = $(".chn-sub-btn");
+
+        let subbed = '<button class="chn-sub-btn btn btn-lg btn-outline-danger d-block mt-4 mx-auto">Subscribed!</button >';
+        let unsubbed = '<button class="chn-sub-btn btn btn-lg btn-danger d-block mt-4 mx-auto">Subscribe</button>';
+
+        //! Sub/Unsub
+        $('#channel-btn-box').on('click', subBtn, function (e) {
+            e.preventDefault();
+
+            $.post(
+                '/Subscription/Subscribe',
+                {
+                    __RequestVerificationToken: rvt,
+                    targetId: channelId
+                },
+                function (response) {
+
+                    switch (response) {
+                        case '204':
+                            // Remove Sub
+                            subBtn.remove();
+                            $('#channel-btn-box').html(unsubbed);
+                            break;
+
+                        case '201':
+                            // Sub to channel
+                            subBtn.remove();
+                            $('#channel-btn-box').html(subbed);
+                            break;
+                    }
+                }
+            );
+
+        });
+    });
+</script>
+
+}

@@ -1,0 +1,146 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="text-center">
+
+    <h1 class="h3 navbar-brand my-5 font-weight-normal" style="color:orange">Register &nbsp; new &nbsp; account</h1>
+    <div class="row justify-content-center">
+        <div class="col-4">
+            <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                <fieldset class="">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div id="email-box">
+                        <input asp-for="Input.Email" class="form-control email-input" placeholder="Email">
+                        <span id="email-warning"></span>
+                    </div>
+
+                    <div id="username-box">
+                        <input asp-for="Input.Username" class="form-control username-input" placeholder="Username">
+                        <span id="username-warning"></span>
+                    </div>
+
+                    <hr />
+                    <input asp-for="Input.Password" class="form-control" placeholder="Password">
+                    <input asp-for="Input.ConfirmPassword" class="form-control" placeholder="Confirm Password">
+
+
+                    <button class="reg-btn my-5 btn btn-lg btn-primary btn-block" type="submit">Register</button>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    #username-box,
+    #email-box {
+        position: relative;
+    }
+
+    #username-warning,
+    #email-warning {
+        position: absolute;
+        top: 5px;
+        right: -175px;
+        width: 170px;
+        text-align: left;
+        font-weight: 400;
+    }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+            let emailValid,
+                nameValid;
+            let urlName = '/Identity/Account/Register?handler=UserNameCheck';
+            let urlEmail = "/Identity/Account/Register?handler=EmailCheck";
+
+
+            $('.username-input').keyup(function () {
+
+                $.ajax({
+                    type: "GET",
+                    url: urlName,
+                    data: { userName: $('.username-input').val() },
+                    contentType: "application/json; charset=utf-8",
+
+                    dataType: "json",
+
+                    success: function (response) {
+                        console.log('Success:' + response);
+                        if (response == null) {
+                            $('#username-warning').text('');
+                            nameValid = true;
+
+                            if (nameValid && emailValid) {
+                                $('.reg-btn').prop("disabled", false);
+                            }
+                        }
+                        else if (response) {
+                            $('#username-warning').css("color", "green");
+                            $('#username-warning').text('Username available.');
+                            nameValid = true;
+
+                            if (nameValid && emailValid) {
+                                $('.reg-btn').prop("disabled", false);
+                            }
+                        }
+                        else
+                        {
+                            $('#username-warning').css("color", "red");
+                            $('#username-warning').text('Username unavailable!');
+                            nameValid = false;
+                            $('.reg-btn').prop("disabled", true);
+                        }
+                    }
+                });
+            });
+
+            $('.email-input').keyup(function () {
+
+                $.ajax({
+                    type: "GET",
+                    url: urlEmail,
+                    data: { email: $('.email-input').val() },
+                    contentType: "application/json; charset=utf-8",
+
+                    dataType: "json",
+
+                    success: function (response) {
+                        console.log('Success:' + response);
+                        if (response === null) {
+                            $('#email-warning').text('');
+                            emailValid = true;
+
+                            if (nameValid && emailValid) {
+                                $('.reg-btn').prop("disabled", false);
+                            }
+                        }
+                        else if (response) {
+                            $('#email-warning').css("color", "green");
+                            $('#email-warning').text('Email available.');
+                            emailValid = true;
+
+                            if (nameValid && emailValid) {
+                                $('.reg-btn').prop("disabled", false);
+                            }
+                        }
+                        else {
+                            $('#email-warning').css("color", "red");
+                            $('#email-warning').text('Email unavailable.');
+                            emailValid = false;
+                            $('.reg-btn').prop("disabled", true);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -1,0 +1,235 @@
+﻿@model Channel365.Models.PlaylistModel
+@{
+    ViewData["Title"] = "Playlist";
+    bool IsOwner = (bool)ViewData["IsOwner"];
+}
+
+@if (Model == null)
+{
+    <h1>Hey! How did you get here?! This is a private playlist!</h1>
+    <a class="btn btn-sm btn-info" asp-controller="Playlist" asp-action="Playlists" asp-route-id="@Model.ApplicationUser.Id">Back</a>
+}
+else
+{
+    <div class="page-header mb-5">
+        <h1 class="">
+            <a asp-controller="Playlist" asp-action="Playlists" asp-route-id="@Model.ApplicationUser.Id">
+                <small title="Back to Playlists">
+                    <svg class="bi bi-arrow-return-left text-info" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M5.854 5.646a.5.5 0 0 1 0 .708L3.207 9l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0z" />
+                        <path fill-rule="evenodd" d="M13.5 2.5a.5.5 0 0 1 .5.5v4a2.5 2.5 0 0 1-2.5 2.5H3a.5.5 0 0 1 0-1h8.5A1.5 1.5 0 0 0 13 7V3a.5.5 0 0 1 .5-.5z" />
+                    </svg>
+                </small>
+            </a>
+            @Model.PlaylistName, <small>
+                created by
+                <a asp-controller="Channel" asp-action="Index" asp-route-id="@Model.ApplicationUser.Id">
+                    @Model.ApplicationUser.UserName
+                </a>
+            </small>
+        </h1>
+        <input id="pList-id-storage" type="hidden" value="@Model.PlaylistId" />
+    </div>
+    <h2 id="empty-list">
+        @(Model.VideosInPlaylists.Count == 0 ? "No videos added to this playlist yet..." : "" )
+    </h2>
+    <div class="row videos-box pt-5 ml-5">
+        @foreach (var video in Model.VideosInPlaylists)
+        {
+            <div id="@video.VideoId" class="col-4 video-item">
+                @if (IsOwner)
+                {
+                    <div class="rm-vid btn-group dropleft">
+                        <button class="close dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span aria-hidden="true" title="Remove video">&times;</span>
+                        </button>
+
+                        <div class="dropdown-menu playlist-menu">
+                            <form class="rm-vid-form" method="post">
+                                <small class="dd-title">Remove from playlist</small>
+                                <hr class="dd-hr" />
+                                <small>Are you sure?</small>
+                                <button class="btn btn-sm btn-outline-info btn-block mt-2 rm-btn">YES</button>
+                                <input class="vid-id-storage" type="hidden" value="@video.Video.VideoId" />
+                            </form>
+                        </div>
+                    </div>
+                }
+                <div class="video-container">
+                    <a asp-controller="Video" asp-action="Video" asp-route-id="@video.Video.VideoId">
+                        <video class="video-player" src="@video.Video.VideoPath"></video>
+                    </a>
+                    <div class="row">
+                        <div class="col-auto pr-0">
+                            <a title="Go to @video.Video.ApplicationUser.UserName's channel" class="uploader-link" asp-controller="Channel" asp-action="Index" asp-route-id="@video.Video.ApplicationUser.Id">
+                                <img class="rounded-circle" src="@video.Video.ApplicationUser.UserImageUrl" />
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a asp-controller="Video" asp-action="Video" asp-route-id="@video.Video.VideoId">
+                                <h5>@video.Video.VideoTitle</h5>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="date d-inline">
+                    <small class="text-muted">@video.Video.CreatedDate.ToShortDateString() &bull;</small>
+                </div>
+                <div class="likes d-inline">
+                    <small class="text-muted">
+                        <svg style="vertical-align:initial" class="bi bi-hand-thumbs-up" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.965.22.816.533 2.511.062 4.51a9.84 9.84 0 0 1 .443-.051c.713-.065 1.669-.072 2.516.21.518.173.994.681 1.2 1.273.184.532.16 1.162-.234 1.733.058.119.103.242.138.363.077.27.113.567.113.856 0 .289-.036.586-.113.856-.039.135-.09.273-.16.404.169.387.107.819-.003 1.148a3.163 3.163 0 0 1-.488.901c.054.152.076.312.076.465 0 .305-.089.625-.253.912C13.1 15.522 12.437 16 11.5 16v-1c.563 0 .901-.272 1.066-.56a.865.865 0 0 0 .121-.416c0-.12-.035-.165-.04-.17l-.354-.354.353-.354c.202-.201.407-.511.505-.804.104-.312.043-.441-.005-.488l-.353-.354.353-.354c.043-.042.105-.14.154-.315.048-.167.075-.37.075-.581 0-.211-.027-.414-.075-.581-.05-.174-.111-.273-.154-.315L12.793 9l.353-.354c.353-.352.373-.713.267-1.02-.122-.35-.396-.593-.571-.652-.653-.217-1.447-.224-2.11-.164a8.907 8.907 0 0 0-1.094.171l-.014.003-.003.001a.5.5 0 0 1-.595-.643 8.34 8.34 0 0 0 .145-4.726c-.03-.111-.128-.215-.288-.255l-.262-.065c-.306-.077-.642.156-.667.518-.075 1.082-.239 2.15-.482 2.85-.174.502-.603 1.268-1.238 1.977-.637.712-1.519 1.41-2.614 1.708-.394.108-.62.396-.62.65v4.002c0 .26.22.515.553.55 1.293.137 1.936.53 2.491.868l.04.025c.27.164.495.296.776.393.277.095.63.163 1.14.163h3.5v1H8c-.605 0-1.07-.081-1.466-.218a4.82 4.82 0 0 1-.97-.484l-.048-.03c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.615.849-.232 1.574-.787 2.132-1.41.56-.627.914-1.28 1.039-1.639.199-.575.356-1.539.428-2.59z" />
+                        </svg>
+                        @video.Video.LikesAndDislikes.Where(x => x.Like == true).Count()
+                        &bull;
+                    </small>
+                </div>
+                <div class="dislikes d-inline">
+                    <small class="text-muted">
+                        <svg class="bi bi-hand-thumbs-down" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M6.956 14.534c.065.936.952 1.659 1.908 1.42l.261-.065a1.378 1.378 0 0 0 1.012-.965c.22-.816.533-2.512.062-4.51.136.02.285.037.443.051.713.065 1.669.071 2.516-.211.518-.173.994-.68 1.2-1.272a1.896 1.896 0 0 0-.234-1.734c.058-.118.103-.242.138-.362.077-.27.113-.568.113-.857 0-.288-.036-.585-.113-.856a2.094 2.094 0 0 0-.16-.403c.169-.387.107-.82-.003-1.149a3.162 3.162 0 0 0-.488-.9c.054-.153.076-.313.076-.465a1.86 1.86 0 0 0-.253-.912C13.1.757 12.437.28 11.5.28v1c.563 0 .901.272 1.066.56.086.15.121.3.121.416 0 .12-.035.165-.04.17l-.354.353.353.354c.202.202.407.512.505.805.104.312.043.44-.005.488l-.353.353.353.354c.043.043.105.141.154.315.048.167.075.37.075.581 0 .212-.027.415-.075.582-.05.174-.111.272-.154.315l-.353.353.353.354c.353.352.373.714.267 1.021-.122.35-.396.593-.571.651-.653.218-1.447.224-2.11.164a8.907 8.907 0 0 1-1.094-.17l-.014-.004H9.62a.5.5 0 0 0-.595.643 8.34 8.34 0 0 1 .145 4.725c-.03.112-.128.215-.288.255l-.262.066c-.306.076-.642-.156-.667-.519-.075-1.081-.239-2.15-.482-2.85-.174-.502-.603-1.267-1.238-1.977C5.597 8.926 4.715 8.23 3.62 7.93 3.226 7.823 3 7.534 3 7.28V3.279c0-.26.22-.515.553-.55 1.293-.138 1.936-.53 2.491-.869l.04-.024c.27-.165.495-.296.776-.393.277-.096.63-.163 1.14-.163h3.5v-1H8c-.605 0-1.07.08-1.466.217a4.823 4.823 0 0 0-.97.485l-.048.029c-.504.308-.999.61-2.068.723C2.682 1.815 2 2.434 2 3.279v4c0 .851.685 1.433 1.357 1.616.849.232 1.574.787 2.132 1.41.56.626.914 1.28 1.039 1.638.199.575.356 1.54.428 2.591z" />
+                        </svg>
+                        @video.Video.LikesAndDislikes.Where(x => x.Like == false).Count()
+                    </small>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<style>
+    .video-item {
+        position: relative;
+        max-width: 300px;
+        width: 300px;
+        margin-bottom: 1rem;
+        transition: 0.3s all;
+    }
+
+    .video-container {
+        width: 100%;
+    }
+
+    .video-player {
+        width: 100%;
+        max-height: 150px;
+        box-shadow: 0 0 2px 1px #868484;
+    }
+
+    .vid-desc-text {
+        margin-bottom: 0.2rem;
+    }
+
+    .uploader-link img {
+        height: 35px;
+        width: 35px;
+    }
+
+    .upload-date {
+        float: right;
+    }
+
+    /* Remove Video button and content --- */
+    .dropleft .dropdown-toggle::before {
+        content: none;
+    }
+
+    .rm-vid {
+        position: absolute;
+        top: 0;
+        right: 15px;
+        min-width: 30px;
+        min-height: 30px;
+        z-index: 1;
+    }
+
+    .rm-vid-form {
+        text-align: center;
+        color: #7a2776;
+    }
+
+    .rm-btn {
+        margin-bottom: 10px;
+        border-left: none;
+        border-right: none;
+        border-radius: 0;
+    }
+
+    .rm-vid > button {
+        color: white;
+        width: 100%;
+        outline: none;
+    }
+
+    .dd-title {
+        font-weight: 700;
+    }
+
+    .dd-hr {
+        margin-top: 0.5rem;
+        margin-bottom: 0.2rem;
+    }
+    /* ---------------------------------- */
+
+</style>
+
+@section Scripts {
+    <script>
+        let playlistId = $('#pList-id-storage').val();
+        let rvt = $('input[name="__RequestVerificationToken"]').val();
+        const url = '../RemoveFromPlaylist';
+
+        $('.rm-btn').click(function (e) {
+            e.preventDefault();
+            let vidId = $(this).siblings('.vid-id-storage').val();
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: {
+                    __RequestVerificationToken: rvt,
+                    playlistId: playlistId,
+                    videoId: vidId
+                },
+                dataType: "json",
+
+                success: function (response) {
+
+                    switch (response) {
+                        case '404':
+                            break;
+
+                        case '204':
+                            $('.top').css('height', '50%');
+                            $('.bottom').css('height', '50%');
+                            $('#' + vidId).css('padding', '0');
+                            $('#' + vidId).css('max-width', '0');
+                            setTimeout(() => {
+                                $('#' + vidId).css('display', 'none');
+                                $('#' + vidId).remove();
+                            }, 150);
+
+                            $.getJSON(
+                                '../../Playlist/GetPlaylistVideoAmount',
+                                {id: '@Model.PlaylistId'},
+                                function (response) {
+                                let amount = response;
+                                    console.log(amount);
+                                if (amount === 0) {
+                                    $('#empty-list').hide();
+                                    $('#empty-list').text('No videos added to this playlist yet...');
+                                    $('#empty-list').slideDown(300);
+                                }
+                            });
+
+                            break;
+                    }
+                },
+                error: function (response) {
+                    console.log("error: " + response);
+                }
+            });
+        });
+
+    </script>
+}

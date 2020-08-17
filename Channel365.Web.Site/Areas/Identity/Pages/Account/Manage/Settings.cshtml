@@ -1,0 +1,188 @@
+﻿@page
+@model SettingsModel
+@{
+    ViewData["Title"] = "Settings";
+    ViewData["ActivePage"] = ManageNavPages.Settings;
+}
+
+<div class="row settings-navbar mt-5 ">
+    <div class="col settings-nav-item item-active">
+        <h1 id="profile-btn" class="settings-nav-btn"><img class="w-25" src="~/pic/icon/3d_docments_alt_folder_20534.png" /></h1>
+    </div>
+
+    <div class="col settings-nav-item">
+        <h1 id="email-btn" class="settings-nav-btn"><img class="w-25" src="~/pic/icon/3D-Mail-icon.png" /></h1>
+    </div>
+
+    <div class="col settings-nav-item">
+        <h1 id="details-btn" class="settings-nav-btn"><img class="w-25" src="~/pic/icon/3d_user_folder_20516.png" /></h1>
+    </div>
+</div>
+
+
+
+<hr class="settings-page-separator" />
+
+<div class="settings-content">
+    <div class="content-info profile-content">
+        <h2 style="color:orange">Update profile information</h2>
+
+        <div class="row acc-details">
+            <div class="">
+                <form class="form-check" method="post">
+                    <fieldset id="profile-form">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="form-group">
+                            <div class="profile-img-container" style="width:150px; height:150px;">
+                                <img src="@Model.ImageUrl" alt="User profile image" class="w-100" />
+                            </div>
+                            <div class="input-container">
+                                <label asp-for="Input.NewImageUrl"></label>
+                                <input asp-for="Input.NewImageUrl" class="form-control" />
+                                <span asp-validation-for="Input.NewImageUrl" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Input.NewUsername"></label>
+                            <input asp-for="Input.NewUsername" class="form-control" />
+                            <span asp-validation-for="Input.NewUsername" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Input.PhoneNumber"></label>
+                            <input asp-for="Input.PhoneNumber" class="form-control" />
+                            <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                        </div>
+                        <button style="color:orange" type="submit" asp-page-handler="UpdateProfile" class="btn btn-outline-light mb-5">Update Information</button>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-info email-content content-hidden">
+        <h2 style="color:orange">Change your email</h2>
+
+        <div class="row acc-details">
+            <div class="">
+                <form class="form-check" method="post">
+                    <fieldset id="email-form">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Email"></label>
+                            @if (Model.IsEmailConfirmed)
+                            {
+                                <div class="input-group">
+                                    <input asp-for="Email" class="form-control" disabled />
+                                    <div class="input-group-append">
+                                        <span class="input-group-text text-success font-weight-bold">✓</span>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <input asp-for="Email" class="form-control" disabled />
+                                <button id="email-verification" type="submit" asp-page-handler="SendVerificationEmail" class="btn btn-link">Send verification email</button>
+                            }
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Input.NewEmail"></label>
+                            <input asp-for="Input.NewEmail" class="form-control" />
+                            <span asp-validation-for="Input.NewEmail" class="text-danger"></span>
+                        </div>
+                        <button style="color:orange" id="change-email-button" type="submit" asp-page-handler="ChangeEmail" class="btn btn-outline-light">Change email</button>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-info details-content content-hidden">
+        <h2 style="color:orange">View your personal information</h2>
+
+        <div class="row acc-details">
+            <div class="">
+                <form class="form-check" method="post">
+                    <fieldset id="details-form">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="form-group">
+                            @if (Model.IsFullNameSet)
+                            {
+                                <label asp-for="FirstName"></label>
+                                <div class="input-group">
+                                    <input asp-for="FirstName" class="form-control" disabled />
+                                    <div class="input-group-append">
+                                        <span class="input-group-text text-success font-weight-bold">✓</span>
+                                    </div>
+                                </div>
+
+                                <label asp-for="LastName"></label>
+                                <div class="input-group">
+                                    <input asp-for="LastName" class="form-control" disabled />
+                                    <div class="input-group-append">
+                                        <span class="input-group-text text-success font-weight-bold">✓</span>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="form-group">
+                                    <label asp-for="Input.SetFirstName"></label>
+                                    <input asp-for="Input.SetFirstName" class="form-control" required />
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Input.SetLastName"></label>
+                                    <input asp-for="Input.SetLastName" class="form-control" required />
+                                </div>
+                                <button type="submit" asp-page-handler="SetPersonalDetails" class="btn btn-outline-light">Set Name</button>
+                            }
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            $('.settings-nav-item').click(function () {
+
+                if (!$(this).hasClass('item-active')) {
+                    $('.settings-nav-item').removeClass('item-active');
+
+                    $(this).addClass('item-active');
+
+                    disableForms();
+
+                    switch ($(this).children(':first').attr('id')) {
+
+                        case 'profile-btn':
+                            switchDisplayedContent($('.profile-content'));
+                            $('#profile-form').prop("disabled", false);
+                            break;
+
+                        case 'email-btn':
+                            switchDisplayedContent($('.email-content'));
+                            $('#email-form').prop("disabled", false);
+                            break;
+
+                        case 'details-btn':
+                            switchDisplayedContent($('.details-content'));
+                            $('#details-form').prop("disabled", false);
+                            break;
+                    }
+                }
+            });
+
+            function switchDisplayedContent(element) {
+                $('.content-info').addClass('content-hidden');
+                element.removeClass('content-hidden');
+            }
+            function disableForms() {
+                $('fieldset').prop("disabled", true);
+            }
+        });
+    </script>
+}

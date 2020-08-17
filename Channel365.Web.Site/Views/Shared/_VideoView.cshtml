@@ -1,0 +1,302 @@
+﻿@model Channel365.Models.VideoModel
+@{
+    ViewData["Title"] = "Video";
+}
+    <div class="video-page-container">
+        <div class="video-container" style="width:100%; height:500px;">
+            <input id="vid-id-storage" type="hidden" value="@Model.VideoId" />
+            @if (Model.VideoPath == null)
+            {
+                <img src="@Model.VideoImage" alt="Alternate Text" height="500" width="100%" />
+            }
+            else
+            {
+                @* Plyr video player *@
+                <video id="player" class="video-player" playsinline controls data-poster="@Model.VideoImage">
+                    <source src="@Model.VideoPath" type="@Model.File" />
+                    <source src="@Model.VideoPath" type="video/webm" />
+                </video>
+
+            }
+        </div>
+
+        <div class="container-details" style="width:100%">
+            <div class="row">
+                <div class="col-12 col-lg-8 video-info justify-content-around">
+
+                    <div class="row">
+                        <div class="col user-info">
+                            <br />
+                            <div class="row test pb-1">
+                                <a asp-controller="Channel" asp-action="Index" asp-route-id="@Model.ApplicationUser.Id" title="@Model.ApplicationUser.UserName">
+                                    <img class="col p-0 uploader rounded" src="@Model.ApplicationUser.UserImageUrl" />
+                                </a>
+                                <h4 class="col">@Model.VideoTitle</h4>
+                            </div>
+
+                            <small class="text-muted">@Model.CreatedDate.ToLongDateString().ToUpper()</small>
+                            <p>@Model.VideoDescription</p>
+                            <br />
+                        </div>
+
+                        <div class="col video-likes mb-1">
+                            <div class="result-btn pt-3">
+
+                                @* Like video *@
+                                <form class="like-button d-inline-block">
+                                    <button id="like-vid-btn" class="btn btn-primary set-like" value="true" title="I like it ;)" @(ViewBag.User == null ? "disabled" : "")>
+                                        <i class="far fa-thumbs-up"></i><span id="like-vid-count" class="ml-1 badge badge-light">@Model.LikesAndDislikes.Count(x => x.Like == true)</span>
+                                        
+                                    </button>
+                                </form>
+
+                                @* Dislike video *@
+                                <form class="like-button d-inline-block">
+                                    <button id="dislike-vid-btn" class="btn btn-primary set-like" value="false" title="I dont like it" @(ViewBag.User == null ? "disabled" : "")>
+                                        <i class="far fa-thumbs-down"></i><span id="dislike-vid-count" class="ml-1 badge badge-light">@Model.LikesAndDislikes.Count(x => x.Like == false)</span>
+                                    </button>
+                                </form>
+
+                                @* Subscribe *@
+                                <div class="btn-group" role="group">
+                                    <form class="subscribe-button d-inline-block" method="post"> @* asp-controller="Subscription" asp-action="Subscribe" asp-route-id="@Model.ApplicationUser.Id" *@
+                                        <button id="sub-btn" class="btn btn-danger" value="@Model.ApplicationUser.Id" title="Subscribe" @(ViewBag.User == null ? "disabled" : "")>
+                                            Subscribe   <span class="badge badge-light"></span>
+                                            <span class="sr-only">subscribe</span>
+                                        </button>
+                                    </form>
+
+                                    @* Add to playlist *@
+                                    <div class="btn-group" role="group">
+                                        <button id="video-options"
+                                                class="btn btn-danger dropdown-toggle"
+                                                data-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false"
+                                                @(ViewBag.User == null ? "disabled" : "")>
+                                            <svg class="bi bi-three-dots-vertical" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd" d="M9.5 13a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm0-5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm0-5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="video-options">
+                                            <a class="dropdown-item" data-toggle="modal" data-target="#vid-options">Add to a playlist..</a>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <p style="border-bottom:solid thin"></p>
+                    <form class="chat-input input-group mb-3">
+                        <input id="store-id" type="hidden" name="videoId" value="@Model.VideoId" />
+                        <input id="store-title" type="hidden" name="videoName" value="@Model.VideoTitle" />
+                        <input id="message-input" class="form-control" type="text" name="message"  placeholder=" Write your comments.." required />
+
+                        <div class="input">
+                            <button id="button-comment"
+                                    class="btn btn-outline-light bg-black text-light"
+                                    @(ViewBag.User == null ? "disabled" : "")>
+                                Send
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="comment-section">
+                        <div class="comment-count mb-5">
+                            <h5 class="" style="color:#b5b5b5;"><span id="cmnt-counter">@Model.CommentVideos.Count()</span> Comments</h5>
+                        </div>
+                        <div class="comment-display">
+                            @foreach (var message in Model.CommentVideos.Reverse())
+                            {
+                                <div class="message">
+                                    <input class="cmnt-id" type="hidden" value="@message.CommentId" />
+                                    <b><a class="message-name">@message.Name</a></b>  <small class="text-muted">@message.PostedAt.ToString("dd-MMM") @message.PostedAt.ToShortTimeString()</small>
+                                    <footer id="commentBody">
+                                        <p class="m-0">@message.CommentBody</p>
+                                        @if (ViewBag.User != null && message.ApplicationUser.Id == ViewBag.User.Id)
+                                        {
+                                            <div class="del-comment-btn" title="Delete comment">
+                                                <svg class="bi bi-trash-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                    <path fill-rule="evenodd" d="M2.5 1a1 1 0 00-1 1v1a1 1 0 001 1H3v9a2 2 0 002 2h6a2 2 0 002-2V4h.5a1 1 0 001-1V2a1 1 0 00-1-1H10a1 1 0 00-1-1H7a1 1 0 00-1 1H2.5zm3 4a.5.5 0 01.5.5v7a.5.5 0 01-1 0v-7a.5.5 0 01.5-.5zM8 5a.5.5 0 01.5.5v7a.5.5 0 01-1 0v-7A.5.5 0 018 5zm3 .5a.5.5 0 00-1 0v7a.5.5 0 001 0v-7z" clip-rule="evenodd" />
+                                                </svg>
+                                            </div>
+                                        }
+                                    </footer>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col playlist-container d-none d-lg-block">
+
+                    <br />
+
+                    <p>More videos from @Model.ApplicationUser.UserName</p>
+
+                    @if (Model.ApplicationUser.VideoLibrary.Count() == 1)
+                    {
+                        <h5>@Model.ApplicationUser.UserName has no other videos...</h5>
+                    }
+                    else
+                    {
+                        @foreach (var video in Model.ApplicationUser.VideoLibrary)
+                        {
+                            if (video.VideoId != Model.VideoId)
+                            {
+                                <a class="related-vid" asp-controller="Video" asp-action="Video" asp-route-id="@video.VideoId">
+                                    <div class="vid-box">
+
+                                        @* Maybe change these to posters instead, speed up page loading time *@
+                                        <video class="video-player my-1">
+                                            <source src="@video.VideoPath" type="@Model.File" />
+                                        </video>
+
+                                        <div class="title-overlay">
+                                            <h6>@video.VideoTitle</h6>
+                                        </div>
+                                    </div>
+                                </a>
+                            }
+                        }
+                    }
+                </div>         
+            </div>
+        </div>
+    </div>
+
+<style>
+
+    .uploader {
+        display: inline-block;
+        max-width: 50px;
+        max-height: 50px;
+    }
+    .uploader + h4 {
+        display: inline-block;
+    }
+
+    .video-container video {
+        box-shadow: none;
+    }
+    .video-container img {
+        box-shadow: none;
+    }
+
+    .related-vid {
+        color: white;
+        text-shadow: 1px 1px 1px rgba(10, 10, 10, 1);
+    }
+        .related-vid:hover {
+            color: white;
+        }
+
+    .vid-box {
+        position: relative;
+        text-align: center;
+        transition: .2s all;
+    }
+    .title-overlay {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        opacity: 0;
+        width: 100%;
+        padding-top: 5%;
+        transition: .25s all;
+    }
+    .title-overlay h6 {
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 240px;
+    }
+    .vid-box:hover video {
+        filter: blur(3px);
+    }
+    .vid-box:hover .title-overlay{
+        opacity: 1;
+    }
+
+
+    #message-input {
+        background-color: white;
+        border-style: double;
+    }
+    .chat-body {
+        background-color: white; 
+    }
+    #commentBody {
+        padding-top: 1px;
+        margin-bottom: 20px;
+        position: relative;
+        color: #b5b5b5;
+        font-weight: 200;
+    }
+    .message {
+        transition: all .15s ease-out;
+    }
+
+    .message-name {
+        color: #ffcd70;
+        font-weight: bold;
+    }
+
+    .del-comment-btn {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        cursor: pointer;
+    }
+    #button-comment {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-left: 0;
+    }
+    .video-player {
+        box-shadow: 0 0 2px 1px #868484;
+    }
+    .playlist-container {
+        text-align: center;
+    }
+    .playlist-container video{
+        max-width: 250px;
+        width: 250px;
+        max-height:125px;
+        height: 125px;
+    }
+    .video-likes {
+        text-align:end;
+    }
+    #button-comment:hover {
+        background-color: gray;
+    }
+
+    #sub-btn {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        box-shadow: none!important;
+    }
+    .subbed {
+        background-color: #4f1c20 !important;
+        border-color: #4f1c20 !important;
+    }
+        .subbed:hover {
+            background-color: #76282f !important;
+            border-color: #76282f !important;
+        }
+
+    #video-options {
+        padding: 0;
+        border-left: 1px solid white;
+    }
+    #video-options::after {
+        content: none;
+    }
+    .sidebar-nav {
+        display: none;
+    }
+</style>

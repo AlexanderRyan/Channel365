@@ -1,0 +1,40 @@
+﻿@model Channel365.Data.Entities.ApplicationUser
+@{
+    ViewData["Title"] = "Subcriptions";
+}
+
+    <div class="channel-container">
+
+        <partial name="_ChannelNav" model="@Model" />
+
+        @if (Model.Followings.Count() == 0)
+        {
+            <h1 id="empty">This user is not following anyone...</h1>
+        }
+        else
+        {
+            @foreach (var channel in Model.Followers)
+            {
+                <div class="col-lg-3" style="text-align: center;">
+                    <img class="rounded-circle" src="@channel.Target.UserImageUrl" alt="Profile picture" width="140" height="140">
+                    <h2>@channel.Target.UserName</h2>
+                    <p>Uploaded videos: @channel.Target.VideoLibrary.Count()</p>
+                    <p><a class="btn btn-secondary" asp-controller="Channel" asp-action="Index" asp-route-id="@channel.Target.Id" role="button">Go to Channel »</a></p>
+                </div>
+            }
+        }
+    </div>
+
+<style>
+    #empty {
+        color: #ffcd70;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.subscriber-nav').addClass('active');
+        });
+    </script>
+}

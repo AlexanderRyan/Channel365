@@ -1,0 +1,52 @@
+﻿@model Channel365.Data.Entities.ApplicationUser
+@{
+    ViewData["Title"] = "Subscriptions";
+}
+
+    <div class="row">
+        <div class="divide col text-center">
+            <a class="text-danger" asp-controller="Subscription" asp-action="Subscribed">
+                <h1>Manage subscriptions</h1>
+
+                <div>
+                    <img class="sub-door rounded-circle img-fluid" src="https://cdn2.iconfinder.com/data/icons/classic-development-circle/512/closed_door-512.png" alt="" />
+                </div>
+            </a>
+        </div>
+        <div class="col-1">
+            <a class="btn btn-sm btn-outline-danger border-left-0 border-right-0 text-center" href="/Identity/Account/Manage">Back</a>
+        </div>
+        <div class="divide col text-center">
+            <a class="text-danger" asp-controller="Subscription" asp-action="Subscribers">
+                <h1>View your subscribers</h1>
+                <div>
+                    <img class="sub-door rounded-circle img-fluid" src="https://cdn2.iconfinder.com/data/icons/classic-development-circle/512/closed_door-512.png" alt="" />
+                </div>
+            </a>
+        </div>
+    </div>
+
+
+<style>
+    .divide{
+        height: 100%;
+    }
+</style>
+
+@section Scripts {
+<script>
+
+    $(function () {
+        $('.sub-door').on({
+            mouseenter: function () {
+                console.log("enter");
+                $(this).prop("src", "https://cdn2.iconfinder.com/data/icons/classic-development-circle/512/open_tank-512.png");
+            },
+            mouseleave: function () {
+                $(this).prop("src", "https://cdn2.iconfinder.com/data/icons/classic-development-circle/512/closed_door-512.png");
+            }
+        });
+    });
+
+</script>
+}

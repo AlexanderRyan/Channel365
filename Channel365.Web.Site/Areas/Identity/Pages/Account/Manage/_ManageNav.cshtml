@@ -1,0 +1,8 @@
+﻿@inject SignInManager<ApplicationUser> SignInManager
+@{
+    var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+}
+<ul class="nav nav-pills">
+    <li class="nav-item"><a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="profile" href="/Identity/Account/Manage/">Home</a></li>
+    <li class="nav-item"><a class="nav-link @ManageNavPages.SettingsNavClass(ViewContext)" id="settings" href="/Identity/Account/Manage/Settings">Settings</a></li>
+</ul>

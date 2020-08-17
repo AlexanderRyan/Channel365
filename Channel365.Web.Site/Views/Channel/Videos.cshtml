@@ -1,0 +1,109 @@
+﻿@model Channel365.Data.Entities.ApplicationUser
+@{
+    ViewData["Title"] = Model.UserName;
+
+    int publicVideosAmount = Model.VideoLibrary.Where(x => x.IsPrivate == false).Count();
+}
+
+    <div class="channel-container">
+
+        <h3 style="color:orange" class="navbar-brand mt-4">@Model.UserName's videos</h3>
+
+        <h5>@(publicVideosAmount == 0 ? "No videos uploaded yet..." : "")</h5>
+        <div class="row mt-3">
+
+            <ul class="list-unstyled">
+                @foreach (var video in Model.VideoLibrary)
+                {
+                    <li class="media mb-3">
+                        <a asp-controller="Video" asp-action="Video" asp-route-id="@video.Id" style="display:contents">
+                            <img src="@video.VideoImage" class="mr-3 img-fluid w-25" style="max-height:155px" alt="">
+                        </a>
+                        <div class="media-body">
+                            <h4 class="mt-0 mb-1">
+                                <a asp-controller="Video" asp-action="Video" asp-route-id="@video.Id">
+                                    @video.VideoTitle
+                                </a>
+                            </h4>
+                            <div class="vid-details">
+                            </div>
+                            @video.VideoDescription
+                        </div>
+                    </li>
+
+                }
+            </ul>
+        </div>
+        <a class="btn btn-outline-light mt-5" style="color:orange; border-color:orange" asp-controller="Channel" asp-action="Index" asp-route-id="@Model.Id">Back to Main Channel</a>
+    </div>
+
+<style>
+    hr {
+        border-color: orange;
+    }
+    #empty {
+        color: #ffcd70;
+    }
+    .content-card {
+        max-width: 340px;
+        margin-top: 15px;
+        position: relative;
+    }
+
+    .card {
+        background-color: #2e3846;
+        box-shadow: 0 2px 3px hsla(0, 0%, 4%, 0.1), 0 0 0 1px hsla(0, 0%, 4%, 0.1);
+        opacity: 1;
+        border-radius: 10px;
+        border: none;
+    }
+
+    .card-video {
+        margin: 10px;
+        border-radius: 14px;
+    }
+
+    .featured-video {
+        height: 165px;
+        margin-top: -25px;
+        border-radius: 10px;
+        box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.2), 0 2px 9px 0 rgba(0, 0, 0, 0.2);
+        max-width: 100%;
+        width: 100%;
+        transition: transform 0.3s cubic-bezier(0.52, 0.28, 0.47, 1.15);
+    }
+
+    .card:hover img {
+        transform: translateY(-10px);
+    }
+    .card:hover h4 {
+        color: #ffcd70;
+    }
+
+    .card-body {
+        padding: 1.25rem;
+    }
+
+    .upload-date,
+    .vid-length {
+        font-size: 0.8rem;
+        color: #6d6d6dc9;
+    }
+
+    .card-footer {
+        background-color: transparent;
+        border: none;
+    }
+    .text-color {
+        color: #c08211;
+    }
+
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.video-nav').addClass('active');
+        });
+    </script>
+}

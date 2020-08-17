@@ -1,0 +1,136 @@
+﻿@page
+@model Channel365.Web.Areas.Identity.Pages.Account.Manage.Uploads.IndexModel
+@{
+    ViewData["Title"] = "Your uploads";
+}
+
+@if (Model.Uploads.Count() == 0)
+{
+    <h1 class="mt-5">No videos uploaded yet...</h1>
+}
+else
+{
+    <h3 style="color:orange" class="navbar-brand mt-4">Your videos</h3>
+  
+    <div class="row mt-3">
+
+        <ul class="list-unstyled">
+            @foreach (var video in Model.Uploads)
+            {
+                <li class="media mb-3">
+                    <a asp-controller="Video" asp-action="Video" asp-route-id="@video.Id" style="display:contents">
+                        <img src="@video.VideoImage" class="mr-3 img-fluid w-25" style="max-height:155px" alt="">
+                    </a>
+                    <div class="media-body">
+                        <h4 class="mt-0 mb-1">
+                            <a asp-controller="Video" asp-action="Video" asp-route-id="@video.Id">
+                                @video.Title
+                            </a>
+                        </h4>
+                        <div class="vid-details">
+                        </div>
+                        @video.Description
+                        @if (video.IsPrivate)
+                        {
+                            <p class="vid-visibility">Private <i class="fas fa-lock"></i></p>
+                        }
+                        else
+                        {
+                            <p class="vid-visibility">Public <i class="fas fa-lock-open"></i></p>
+                        }
+                    </div>
+                    <div class="video-forms mt-1">
+                        <a asp-controller="Video" asp-action="Edit" asp-route-id="@video.Id" class="btn btn-sm btn-outline-warning"><i class="fas fa-pencil-alt"></i></a>
+                        <button type="button" class="btn btn-sm btn-outline-warning delete-btn" data-toggle="modal" data-target="#DeleteModal">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <input class="vid-title-storage" type="hidden" value="@video.Title" />
+                        <input class="vid-id-storage" type="hidden" value="@video.Id" />
+                    </div>
+                </li>
+
+            }
+        </ul>
+    </div>
+
+    <div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Are you sure?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p><u><strong id="display-vid-title"></strong></u> will be permanently removed.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    @*<button type="button" class="btn btn-outline-warning">DELETE</button>*@
+                    <form method="post">
+                        <button asp-controller="Video" asp-action="DeleteVideo" class="btn btn-outline-warning">Delete</button>
+                        <input class="vid-id-send" type="hidden" value="" name="id" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+<style>
+    .img-box {
+        width: 250px;
+    }
+
+    .vid-image {
+        width: 100%;
+    }
+
+    .vid-visibility {
+        font-size: 0.85rem;
+        color: dimgrey;
+    }
+
+    .vid-text {
+        display: inline-block;
+        vertical-align: middle;
+        max-width: 250px;
+    }
+
+    .vid-desc-text {
+        max-width: 250px;
+        max-height: 70px;
+        overflow: hidden;
+    }
+
+    .video-forms form {
+        display: inline-block;
+    }
+
+    .modal-content {
+        background-color: #2c3544;
+    }
+
+    .modal-header,
+    .modal-footer {
+        border-color: #515354;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+            $('.delete-btn').click(function () {
+                let vidTitle = $(this).siblings('input').val();
+
+                let vidId = $(this).siblings('.vid-id-storage').val();
+
+                $('#display-vid-title').text(vidTitle);
+                $('.vid-id-send').val(vidId);
+            });
+        });
+    </script>
+}

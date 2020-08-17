@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Channel365</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <script src="https://kit.fontawesome.com/63a4805453.js" crossorigin="anonymous" defer></script>
+    <link href='https://fonts.googleapis.com/css?family=Monoton' rel='stylesheet'>
+    <link rel="shortcut icon" href="~/pic/c365.png" type="image/x-icon">
+    <link rel="stylesheet" href="~/flipster/dist/jquery.flipster.min.css">
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.6.2/plyr.css" />
+
+    <style>
+        /* Style for searchbar and its btn*/
+        .search-box input {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            border-right: none;
+        }
+
+        .search-box button {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            border-left: none;
+        }
+    </style>
+
+</head>
+
+<body>
+    <header>
+        <div class="navbar-color navbar navbar-expand-sm navbar-toggleable-sm navbar-dark  border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a asp-area="" asp-controller="Home" asp-action="Index">
+                    <i title="Channel365" class="fab fa-google-play fa-3x "></i>
+                </a>
+                <a class="navbar-brand d-none d-lg-inline-block" asp-area="" asp-controller="Home" asp-action="Index">Channel 365</a>
+
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="search-box navbar-search navbar navbar-dark pl-5 flex-grow-1">
+                    <form asp-controller="Search" asp-action="Index" method="get" class="form-inline w-100">
+                        <input style="width:80%" class="form-control" name="SearchQuery" type="text" placeholder="Search for.." aria-label="Search">
+                        <button class="btn btn-outline-light my-2 my-sm-0" style="color:gray" type="submit"><i class="fas fa-search" style="color:gray"></i></button>
+                    </form>
+                </div>
+
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                    <partial name="_LoginPartial" />
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <div class="container-fluid">
+        
+        <div class="row mr-0">
+
+            <div class="col-1 d-none d-sm-block">
+                <partial name="_SideNav" />
+            </div>
+
+            <div class="col content container">
+                <main role="main" class="pb-3">
+                    @RenderBody()
+                </main>
+            </div>
+
+            <div class="col-1 d-none d-md-block"></div>
+
+        </div>
+    </div>
+    <br />
+    <footer class="border-top footer text-muted position-absolute">
+        <div class="container-fluid">
+            <p class="foot-text"> &copy; 2020 - Channel365</p>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/flipster/dist/jquery.flipster.min.js"></script>
+    <script>
+
+        $(document).ready(() => {
+            $("#coverflow").css('opacity', '1');
+
+            $("#coverflow").flipster({
+                start: 'center',
+                nav: false,
+                scrollwheel: false
+            });
+            setTimeout(() => {
+                $("#coverflow").flipster('jump', 0);
+            },1500)
+            
+
+        });
+        
+    </script>
+    @RenderSection("Scripts", required: false)
+
+
+</body>
+</html>

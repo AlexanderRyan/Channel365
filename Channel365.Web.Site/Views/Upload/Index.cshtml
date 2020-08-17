@@ -1,0 +1,115 @@
+﻿@model Channel365.Models.VideoModel
+@{
+    ViewData["Title"] = "Upload";
+}
+<h3 style="color:orange" class="navbar-brand">Upload your video</h3>
+<br />
+
+@using (Html.BeginForm("Index", "Upload", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+<div class="form-horizontal">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        <label class="form-check-label control-label col-md-2">Title</label>
+        @*@Html.LabelFor(model => model.VideoTitle, htmlAttributes: new { @class = "control-label col-md-2" })*@
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.VideoTitle, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.VideoTitle, "", new { @class = "text-danger" })
+        </div>
+    </div><!-- /.form-group -->
+    <div class="form-group control-label">
+        <label class="form-check-label control-label col-md-2">Description</label>
+        @*@Html.LabelFor(model => model.VideoDescription, htmlAttributes: new { @class = "control-label col-md-2" })*@
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.VideoDescription, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.VideoDescription, "", new { @class = "text-danger" })
+        </div>
+    </div><!-- /.form-group -->
+    <div class="form-group">
+        <label class="form-check-label control-label col-md-2">Image</label>
+        @*@Html.LabelFor(model => model.VideoImage, htmlAttributes: new { @class = "control-label col-md-2" })*@
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.VideoImage, new { name = "Image", type = "image", htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.VideoImage, "", new { @class = "text-danger" })
+        </div>
+    </div><!-- /.form-group -->
+    <div class="form-group">
+        <label class="form-check-label control-label col-md-2">File</label>
+        @*@Html.LabelFor(model => model.File, htmlAttributes: new { @class = "control-label col-md-2" })*@
+        <div class="col-md-10">
+            @Html.TextBoxFor(model => model.File, new { name = "File", type = "file", htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.File, "", new { @class = "text-danger" })
+        </div>
+    </div><!-- /.form-group -->
+    <div class="form-group form-check">
+        
+        <label class="form-check-label control-label col-md-2">
+
+            <input class="form-check-input" asp-for="IsPrivate" />Private@*@Html.DisplayNameFor(model => model.IsPrivate)*@
+        </label>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <button type="submit" value="Create" class="btn btn-outline-light" style="color:orange; border-bottom-color:orange">Upload</button>
+            @*<input type="submit" value="Create" class="btn btn-default" />*@
+        </div>
+    </div>
+</div>
+}
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
+
+
+
+@*@model IEnumerable<Channel365.Models.VideoModel>
+    @{
+        ViewData["Title"] = "Upload";
+    }
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.VideoTitle)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.VideoDescription)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CreatedDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.UpdatedDate)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model) {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.VideoTitle)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.VideoDescription)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreatedDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UpdatedDate)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.VideoId">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.VideoId">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.VideoId">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>*@

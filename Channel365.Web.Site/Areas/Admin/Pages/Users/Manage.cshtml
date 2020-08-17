@@ -1,0 +1,418 @@
+﻿@page
+@model Channel365.Web.Areas.Admin.Pages.Users.ManageModel
+@{
+
+}
+
+    <div>
+
+        <h1 style="color:orange" class="navbar-brand">Manage Users</h1>
+        <div id="alert-status-msg" class="alert alert-success alert-dismissible collapse" role="alert">
+            <p id="status-msg"></p>
+            <button id="alert-close" class="close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+
+<hr />
+
+<div class="row appendage">
+    @foreach (var user in Model.Users)
+    {
+        <div id="@user.Id" class="media col-12">
+            <img class="usr-img mr-3" src="@user.UserImageUrl" alt="Profile picture">
+            <div class="media-body">
+                <h5 class="mt-0">@user.UserName</h5>
+                <p>@user.Email</p>
+                @if (user.FirstName == null && user.LastName == null)
+                {
+                    <p>Full name not set</p>
+                }
+                else
+                {
+                    <p>@user.FirstName @user.LastName</p>
+                }
+                <div class="mt-2 d-block">
+                    <button type="button" class="btn btn-sm btn-outline-warning edit-btn" data-toggle="modal" data-target="#EditModal">
+                        <i class="fas fa-pencil-alt"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-warning delete-btn" data-toggle="modal" data-target="#DeleteModal">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <input class="user-id-storage" type="hidden" value="@user.Id" />
+                    <input class="user-name-storage" type="hidden" value="@user.UserName" />
+                    <input class="user-firstName-storage" type="hidden" value="@user.FirstName" />
+                    <input class="user-lastName-storage" type="hidden" value="@user.LastName" />
+                    <input class="user-email-storage" type="hidden" value="@user.Email" />
+                    <input class="user-phoneNr-storage" type="hidden" value="@user.PhoneNumber" />
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-labelledby="delModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="delModal">Are you sure?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><u><strong class="display-user-name"></strong></u> will be permanently removed.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button class="btn btn-outline-warning modal-del-btn">Delete</button>
+                <input class="user-id-send" type="hidden" name="id" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="EditModal" tabindex="-1" role="dialog" aria-labelledby="edtModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="edtModal">Edit Username</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form>
+                    <input id="user-id-display" class="form-control form-control-sm mb-3" type="text" title="Click to copy to clipboard" readonly>
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-sm btn-outline-secondary">Username</button>
+                        </div>
+                        <input id="edt-username" type="text" class="form-control" aria-label="Small">
+                    </div>
+
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">First and last name</span>
+                        </div>
+                        <input id="edt-firstName" type="text" class="form-control" aria-label="Small">
+                        <input id="edt-lastName" type="text" class="form-control" aria-label="Small">
+                    </div>
+
+                    <div class="input-group input-group-sm mb-3">
+                        <input id="edt-email" type="email" class="form-control" placeholder="Email" aria-label="Small">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button">@@example.com</button>
+                        </div>
+                    </div>
+
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-sm btn-outline-secondary">Phonenumber</button>
+                        </div>
+                        <input id="edt-phoneNr" type="text" class="form-control" aria-label="Small">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button id="edt-submit" type="button" class="btn btn-secondary">Edit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.AntiForgeryToken()
+
+<style>
+    body {
+        margin-top: 5rem;
+    }
+
+    #alert-status-msg {
+        padding: 0;
+    }
+
+    #status-msg {
+        font-weight: bold;
+        padding: 0.75rem 0.25rem;
+        margin: 0;
+    }
+
+    hr {
+        border-color: dimgrey;
+        margin-bottom: 5rem;
+    }
+
+    .media {
+        max-height: 200px;
+        margin-bottom: 3rem;
+        transition: max-height 0.25s ease-in-out, margin-bottom 0.25s linear;
+        overflow: hidden;
+    }
+
+    .usr-img {
+        max-width: 200px;
+    }
+
+    .modal-content {
+        background-color: #2c3544;
+    }
+
+    #user-id-display {
+        color: white;
+        background-color: #2c3544;
+        border: 0;
+        border-bottom: 1px solid grey;
+        border-radius: 0;
+        text-align: center;
+    }
+
+        #user-id-display:hover {
+            cursor: pointer;
+        }
+
+    #edt-firstName {
+        background-clip: inherit;
+    }
+
+    .modal-header,
+    .modal-footer {
+        border-color: #515354;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            let searchbox = $('#admin-search');
+            let deleteModal = $('.modal-del-btn');
+            let editModal = $('#edt-submit');
+            let closeAlert = $('#alert-close');
+            let appendage = $('.appendage');
+
+            let statusMessageDiv = $('#alert-status-msg');
+
+            let searchUrl = '/Admin/Users/Manage?handler=FindMatch';
+            let delUrl = '/Admin/Users/Manage?handler=Delete';
+            let edtUrl = '/Admin/Users/Manage?handler=Edit';
+
+            let rvt = $('input[name="__RequestVerificationToken"]').val();
+
+            searchbox.removeClass('hide');
+            searchbox.prop("placeholder", "Search user...");
+
+            $('.appendage').on('click', '.delete-btn', function (e) {
+                e.preventDefault();
+
+                let userName = $(this).siblings('input').val();
+                let userId = $(this).siblings('.user-id-storage').val();
+
+                $('.display-user-name').text(userName);
+                $('.user-id-send').val(userId);
+            });
+
+            $('.appendage').on('click', '.edit-btn', function (e) {
+                e.preventDefault();
+
+                // Store values from the pressed Media-object
+                let usrId = $(this).siblings('.user-id-storage').val();
+                let usrName = $(this).siblings('.user-name-storage').val();
+                let usrFirstName = $(this).siblings('.user-firstName-storage').val();
+                let usrLastName = $(this).siblings('.user-lastName-storage').val();
+                let usrEmail = $(this).siblings('.user-email-storage').val();
+                let usrPhoneNr = $(this).siblings('.user-phoneNr-storage').val();
+
+                // Set current Media-objects values
+                $('#user-id-display').val(usrId);
+                $('#edt-username').prop('placeholder', usrName);
+                $('#edt-firstName').prop('placeholder', usrFirstName);
+                $('#edt-lastName').prop('placeholder', usrLastName);
+                $('#edt-email').prop('placeholder', usrEmail);
+                $('#edt-phoneNr').prop('placeholder', usrPhoneNr);
+            });
+
+            searchbox.keyup(function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    type: "GET",
+                    url: searchUrl,
+                    data: { search: searchbox.val() },
+                    contentType: "application/json; charset=utf-8",
+
+                    dataType: "json",
+
+                    success: function (response) {
+
+                        let users = response;
+                        console.log(users[0]);
+                        appendage.empty();
+
+                        if (users.length > 0) {
+                            for (var i = 0; i < users.length; i++) {
+
+                                appendage.append(`
+                                        <div id="`+ users[i].id + `" class="media col-12">
+                                            <img class="usr-img mr-3" src="`+ users[i].userImageUrl + `" alt="Profile picture">
+                                            <div class="media-body">
+                                                <h5 class="mt-0">`+ users[i].userName + `</h5>
+                                                <p>`+ users[i].email + `</p>`
+                                                + ((users[i].firstName === null && users[i].lastName === null) ? '<p>Full name not set</p>' : '<p>' + users[i].firstName + ' ' + users[i].lastName + '</p>') +`
+                                                <div class="mt-2 d-block">
+                                                    <button type="button" class="btn btn-sm btn-outline-warning edit-btn" data-toggle="modal" data-target="#EditModal">
+                                                         <i class="fas fa-pencil-alt"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-outline-warning delete-btn" data-toggle="modal" data-target="#DeleteModal">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                    <input class="user-name-storage" type="hidden" value="`+ users[i].userName + `" />
+                                                    <input class="user-id-storage" type="hidden" value="`+ users[i].id + `" />
+                                                </div>
+                                            </div>
+                                        </div>`
+                                );
+                            }
+                        }
+                        else {
+                            appendage.append('<h3>No matches found...</h3>');
+                        }
+                    }
+                });
+
+            });
+
+            deleteModal.click(function (e) {
+                e.preventDefault();
+
+                statusMessageDiv.collapse('hide');
+
+                $.ajax({
+                    type: "POST",
+                    url: delUrl,
+                    data: {
+                        __RequestVerificationToken: rvt,
+                        id: $('.user-id-send').val()
+                    },
+
+                    dataType: "json",
+
+                    success: function (response) {
+                        let id = response.split(' ');
+
+                        $('#DeleteModal').modal('hide');
+
+                        $('#DeleteModal').one('hidden.bs.modal', function (e) {
+
+                            $('#' + id[0]).css('max-height', '0');
+                            $('#' + id[0]).css('margin-bottom', '0');
+
+                            setTimeout(() => {
+                                $('#status-msg').html(response);
+
+                                statusMessageDiv.collapse('toggle');
+
+                                statusMessageDiv.on('shown.bs.collapse', function () {
+                                    $(window).scrollTop(0);
+                                })
+
+                            }, 550);
+                        });
+                    },
+                    error: function (response) {
+                        console.log('error: ' + response);
+                    }
+                });
+            });
+
+            editModal.click(function (e) {
+                e.preventDefault();
+
+                statusMessageDiv.collapse('hide');
+
+                $.ajax({
+                    type: "POST",
+                    url: edtUrl,
+                    data: {
+                        __RequestVerificationToken: rvt,
+                        id: $('#user-id-display').val(),
+                        userName: $('#edt-username').val(),
+                        firstName: $('#edt-firstName').val(),
+                        lastName: $('#edt-lastName').val(),
+                        email: $('#edt-mail').val(),
+                        phoneNr: $('#edt-phoneNr').val()
+                    },
+                    dataType: 'json',
+
+                    success: function (response) {
+                        let id = response.split(' ')[0];
+
+                        $('#EditModal').modal('hide');
+                        $('#EditModal').one('hidden.bs.modal', function (e) {
+
+                            $('#' + id).css("max-height", "0");
+                            $('#status-msg').html(response);
+
+                            setTimeout(function () {
+                                $.get(
+                                    '/Admin/Users/Manage?handler=ReturnEdited',
+                                    { id: id },
+                                    function (result) {
+                                        let user = result;
+
+                                        var content = $(`
+                                            <img class="usr-img mr-3" src="`+ user.userImageUrl + `" alt="Profile picture">
+                                                <div class="media-body">
+                                                    <h5 class="mt-0">`+ user.userName + `</h5>
+                                                    <p>`+ user.email + `</p>`
+                                                    + ((user.firstName === null && user.lastName === null) ? '<p>Full name not set</p>' : '<p>' + user.firstName + ' ' + user.lastName + '</p>') +`
+                                                    <div class="mt-2 d-block">
+                                                        <button type="button" class="btn btn-sm btn-outline-warning edit-btn" data-toggle="modal" data-target="#EditModal">
+                                                            <i class="fas fa-pencil-alt"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-outline-warning delete-btn" data-toggle="modal" data-target="#DeleteModal">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
+                                                        <input class="user-id-storage" type="hidden" value="`+user.id+`" />
+                                                        <input class="user-name-storage" type="hidden" value="`+ user.userName +`" />
+                                                        <input class="user-firstName-storage" type="hidden" value="`+ user.firstName +`" />
+                                                        <input class="user-lastName-storage" type="hidden" value="`+ user.lastName +`" />
+                                                        <input class="user-email-storage" type="hidden" value="`+ user.email +`" />
+                                                        <input class="user-phoneNr-storage" type="hidden" value="`+ user.phoneNumber +`" />
+                                                    </div>
+                                                </div>
+                                        `);
+
+                                        $('#' + id).html(content);
+                                    },
+                                    'json'
+                                );
+
+                                setTimeout(function () {
+                                    $('#' + id).css("max-height", "200" + "px");
+
+                                    setTimeout(() => {
+                                        statusMessageDiv.collapse('toggle');
+                                    }, 500);
+
+                                }, 100);
+
+                            }, 350);
+                        });
+                    }
+                });
+
+            });
+
+            closeAlert.click(function (e) {
+                e.preventDefault();
+                statusMessageDiv.collapse('hide');
+            });
+
+        });
+    </script>
+}

@@ -1,0 +1,27 @@
+﻿@model Channel365.Data.Entities.ApplicationUser
+@{
+    ViewData["Title"] = "Subscribers";
+}
+
+<h1 class="pb-5">
+    <a title="Go back" asp-controller="Channel" asp-action="Index" asp-route-id="@Model.Id">
+        <small class="text-danger">
+            <svg class="bi bi-arrow-return-left" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M5.854 5.646a.5.5 0 0 1 0 .708L3.207 9l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0z" />
+                <path fill-rule="evenodd" d="M13.5 2.5a.5.5 0 0 1 .5.5v4a2.5 2.5 0 0 1-2.5 2.5H3a.5.5 0 0 1 0-1h8.5A1.5 1.5 0 0 0 13 7V3a.5.5 0 0 1 .5-.5z" />
+            </svg>
+        </small>
+    </a>
+    @(Model.Followers.Count() == 0 ? "Nobody is subscribed to "+Model.UserName +" yet!" : Model.UserName +"\'s subscribers" )
+</h1>
+
+<div class="row appendage">
+    @foreach (var user in Model.Followers)
+    {
+        <div class="col-lg-2" style="text-align: center;">
+            <img class="rounded-circle" src="@user.Observer.UserImageUrl" alt="Profile picture" width="140" height="140">
+            <h2>@user.Observer.UserName</h2>
+            <p><a class="btn btn-sm btn-secondary" asp-controller="Channel" asp-action="Index" asp-route-id="@user.Observer.Id">Go to Channel »</a></p>
+        </div>
+    }
+</div>

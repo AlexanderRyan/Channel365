@@ -1,0 +1,337 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Channel365.Data.Entities
+@inject UserManager<ApplicationUser> UserManager
+@model Channel365.Models.VideoModel
+
+@{
+    ViewData["Title"] = Model.VideoTitle;
+    var user = ViewBag.User;
+}
+
+<partial name="_VideoView" />
+
+@if (ViewBag.User != null)
+    @await Component.InvokeAsync("AddToPlaylist", user)
+
+    <div class="toast bg-dark fade show" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <img class="rounded mr-2" alt="">
+            <strong class="mr-auto">Notifcation</strong>
+            <small>Just now</small>
+            <button type="button" class="ml-2 mb-1 close cls-toast" data-dismiss="toast">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="toast-body">
+            <strong class="added-vid-title">@Model.VideoTitle</strong> was added to your playlist.
+        </div>
+    </div>
+
+<style>
+    .toast {
+        position: fixed;
+        bottom: 10px;
+        right: -350px;
+        max-width: 350px;
+        z-index: 1;
+        transition: all 0.3s ease-in;
+    }
+</style>
+
+
+@section Scripts {
+    <script src="https://cdn.plyr.io/3.6.2/plyr.js"></script>
+    <script>
+        /* Scripts for _VideoView.cshtml */
+        $(document).ready(function () {
+            let toast = $('.toast');
+            let rvt = $('input[name="__RequestVerificationToken"]').val();
+            let attr = $('#button-comment').attr("disabled");
+            let channelId = $('#sub-btn').val();
+            let subBtn = $('#sub-btn');
+            let vidOptBtn = $('#video-options');
+
+            checkInitialSubState(channelId);
+
+            $('.toast').toast({
+                'animation':true,
+                'autohide': false
+            });
+
+            if (attr === 'disabled') {
+                $('#button-comment').prop("title", "Log in to comment!");
+            }
+
+            $('#video-options').click(() => {
+                $('input[type=radio]').prop('checked', false);
+                $("#response-warning").text("");
+            });
+
+            //! Initialize Plyr-video player
+            const player = new Plyr('#player');
+                       
+            //! Add to Playlist
+            $('.pList-radiobox').click(function () {
+
+                let playlistId = $(this).val();
+                let videoId = $('#vid-id-storage').val();
+                const url = "../../Playlist/AddToPlaylist"
+
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        __RequestVerificationToken: rvt,
+                        playlistId: playlistId,
+                        videoId: videoId
+                    },
+
+                    dataType: 'json',
+
+                    success: function (response) {
+
+                        switch (response) {
+                            case "201":
+                                /* Video successfully added */
+
+                                $('.modal').modal('hide');
+                                $('.toast').toast('show');
+                                setTimeout(() => {
+                                    toast.css('right', '10px');
+
+                                    setTimeout(() => {
+                                        toast.css('right', '-350px');
+                                    }, 5000);
+                                }, 250);
+
+                                break;
+
+                            case '303':
+                                /* Video already added */
+
+                                $("#response-warning").text("Video already added to playlist!");
+                                break;
+
+                            case "404":
+                                /* Unable to locate resource */
+                                $('.modal').modal('hide');
+                                break;
+
+                            default:
+                                break;
+                        }
+                    },
+                    error: function (response) {
+                        console.log("Error occured during Ajax request. ")
+                    }
+
+                });
+
+            });
+
+            //! Create comment
+            $('#button-comment').click(function (e) {
+                e.preventDefault();
+
+                let videoId = $('#store-id').val();
+                let comment = $('#message-input').val();
+
+                if (comment != '') {
+                    $.post(
+                        '../../Video/CreateComment',
+                        {
+                            __RequestVerificationToken: rvt,
+                            videoId: videoId,
+                            message: comment
+                        },
+                        function (response) {
+                            let message = response;
+
+                            $('.comment-display').prepend(`
+                                        <div class="message">
+                                            <input class="cmnt-id" type="hidden" value="`+ message.commentId +`" />
+                                            <b><a class="message-name">`+ message.name + `</a></b>  <small class="text-muted">Just now</small>
+                                            <footer id="commentBody">
+                                                <p class="m-0">`+ message.commentBody + `</p>
+                                                    <div class="del-comment-btn" title="Delete comment">
+                                                        <svg class="bi bi-trash-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                            <path fill-rule="evenodd" d="M2.5 1a1 1 0 00-1 1v1a1 1 0 001 1H3v9a2 2 0 002 2h6a2 2 0 002-2V4h.5a1 1 0 001-1V2a1 1 0 00-1-1H10a1 1 0 00-1-1H7a1 1 0 00-1 1H2.5zm3 4a.5.5 0 01.5.5v7a.5.5 0 01-1 0v-7a.5.5 0 01.5-.5zM8 5a.5.5 0 01.5.5v7a.5.5 0 01-1 0v-7A.5.5 0 018 5zm3 .5a.5.5 0 00-1 0v7a.5.5 0 001 0v-7z" clip-rule="evenodd" />
+                                                        </svg>
+                                                    </div>
+                                            </footer>
+                                        </div>`);
+
+                            $.getJSON(
+                                '../../Video/UpdateCommentCount',
+                                { videoId: videoId },
+                                function (response) {
+                                    let amount = response;
+
+                                    $('#cmnt-counter').html(amount);
+                                    $('#message-input').val('');
+                                }
+                            );
+                        }
+                    );
+                }
+
+            });
+
+            //! Delete comment
+            $('.comment-display').on('click', '.del-comment-btn', function (e) {
+                //e.stopPropagation();
+
+                let commentDiv = $(this).closest('.message');
+                let videoId = $('#store-id').val();
+                let commentId = $(this).closest('.message').children('.cmnt-id').val()
+
+                $.post(
+                    '../../Video/DeleteComment',
+                    {
+                        __RequestVerificationToken: rvt,
+                        videoId: videoId,
+                        commentId: commentId
+                    },
+                    function (response) {
+                        console.log("success: " + response);
+
+                        switch (response) {
+
+                            case '204':
+                                commentDiv.css('transform', 'scale(0, 0)');
+
+                                setTimeout(() =>
+                                {
+                                    commentDiv.remove();
+
+                                    $.getJSON(
+                                        '../../Video/UpdateCommentCount',
+                                        { videoId: videoId },
+                                        function (response) {
+                                            let amount = response;
+
+                                            $('#cmnt-counter').html(amount);
+                                        }
+                                    );
+
+                                }, 250);
+                                break;
+
+                            case '404':
+                                break;
+                        }
+                    }
+                );
+
+            });
+
+            //! Like / Dislike Vid
+            $('.set-like').click(function (e) {
+                e.preventDefault();
+
+                let videoId = $('#vid-id-storage').val();
+                let status = $(this).val();
+
+                $.post(
+                    '/Video/LikeVideo',
+                    {
+                        __RequestVerificationToken: rvt,
+                        videoId: videoId,
+                        like: status
+                    },
+                    function (response) {
+                        let newAmount = response.split(":");
+
+                        $('#like-vid-count').text(newAmount[0]);
+                        $('#dislike-vid-count').text(newAmount[1]);
+                    }
+                );
+            });
+
+            //! Sub/Unsub
+            $(subBtn).click(function (e) {
+                e.preventDefault();
+
+                $.post(
+                    '/Subscription/Subscribe',
+                    {
+                        __RequestVerificationToken: rvt,
+                        targetId: channelId
+                    },
+                    function (response) {
+                        console.log("substate: " + response);
+
+                        switch (response) {
+                            case '204':
+                                ToggleSubButton(subBtn, vidOptBtn, true);
+                                break;
+
+                            case '201':
+                                ToggleSubButton(subBtn, vidOptBtn, false);
+                                break;
+
+                            case '403':
+                                console.log("403 Forbidden: Unable to subscribe to self.");
+                                break;
+
+                            case '404':
+                                console.log("404 Not Found: Unable to locate resource.");
+                                break;
+                        }
+                    }
+                );
+
+            });
+
+            function ToggleSubButton(button, dropdown, isSubbed) {
+
+                if (!isSubbed) {
+                    button.addClass('subbed');
+                    dropdown.addClass('subbed');
+
+                    button.text("Subscribed");
+                    button.prop('title', 'Unsubscribe');
+
+                } else {
+                    button.removeClass('subbed');
+                    dropdown.removeClass('subbed');
+
+                    button.text('Subscribe');
+                    button.prop('title', 'Subscribe');
+                }
+
+
+            }
+            function checkInitialSubState(channelId) {
+
+                $.get(
+                    '/Subscription/IsSubscribed',
+                    { channelId: channelId },
+                    function (response) {
+
+                        switch (response) {
+
+                            case 'false':
+                                //console.log("false: " + response )
+                                break;
+
+                            case 'true':
+                                ToggleSubButton(subBtn, vidOptBtn, false);
+                                break;
+
+                            case 'self':
+                                subBtn.prop("disabled", true);
+                                subBtn.prop('title', "Can't subscribe to yourself");
+                                break;
+
+                            case '404':
+                                //console.log("404: " + response);
+                                break;
+                        }
+
+                    },
+                );
+            }
+        });
+    </script>
+}

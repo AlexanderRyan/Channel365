@@ -1,0 +1,409 @@
+﻿@page
+@model Channel365.Web.Areas.Admin.Pages.Videos.ManageModel
+@{
+
+}
+
+    <div>
+        <h1 style="color:orange" class="navbar-brand">Manage videos</h1>
+        <div id="alert-status-msg" class="alert alert-success alert-dismissible collapse" role="alert">
+            <p id="status-msg"></p>
+            <button id="alert-close" class="close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+
+<hr />
+
+<div class="row appendage">
+    @foreach (var video in Model.Videos)
+    {
+        <div id="@video.VideoId" class="media col-12">
+            <img class="vid-img mr-3" src="@video.VideoImage" alt="Video Thumbnail">
+            <div class="media-body">
+                <h5 class="mt-0">@video.VideoTitle</h5>
+                <p>@video.VideoDescription</p>
+                @if (video.IsPrivate)
+                {
+                    <p><i class="fas fa-lock"></i></p>
+                }
+                else
+                {
+                    <p><i class="fas fa-lock-open"></i></p>
+                }
+                <p>Uploaded by: @video.ApplicationUser.UserName</p>
+                <div class="mt-2 d-block">
+                    <button type="button" class="btn btn-sm btn-outline-warning edit-btn" data-toggle="modal" data-target="#EditModal">
+                        <i class="fas fa-pencil-alt"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-warning delete-btn" data-toggle="modal" data-target="#DeleteModal">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <input class="vid-id-storage" type="hidden" value="@video.VideoId" />
+                    <input class="vid-title-storage" type="hidden" value="@video.VideoTitle" />
+                    <input class="vid-desc-storage" type="hidden" value="@video.VideoDescription" />
+                    <input class="vid-visibility-storage" type="hidden" value="@video.IsPrivate" />
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-labelledby="delModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="delModal">Are you sure?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><u><strong class="display-vid-title"></strong></u> will be permanently removed.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button class="btn btn-outline-warning modal-del-btn">Delete</button>
+                <input class="vid-id-send" type="hidden" name="id" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="EditModal" tabindex="-1" role="dialog" aria-labelledby="edtModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="edtModal">Edit video details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="edt-vid-title" class="col-form-label">Edit title</label>
+                        <input id="edt-vid-title" class="form-control" type="text" placeholder="Video Title Here" />
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Description</span>
+                        </div>
+                        <textarea id="edt-vid-desc" class="form-control" aria-label="Description"></textarea>
+                    </div>
+
+                    <div class="form-group form-check mt-3">
+                        <input type="checkbox" class="form-check-input" id="edt-vid-visibility">
+                        <label class="form-check-label" for="vid-visibility">List as Private</label>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button id="edt-submit" type="button" class="btn btn-secondary">Edit</button>
+                        <input id="edt-id-send" type="hidden" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.AntiForgeryToken()
+
+
+<style>
+    body {
+        margin-top: 5rem;
+    }
+
+    #alert-status-msg {
+        padding: 0;
+    }
+
+    #status-msg {
+        font-weight: bold;
+        padding: 0.75rem 0.25rem;
+        margin: 0;
+    }
+
+    hr {
+        border-color: dimgrey;
+        margin-bottom: 5rem;
+    }
+
+    .media {
+        max-height: 200px;
+        margin-bottom: 3rem;
+        transition: max-height 0.25s ease-in-out, margin-bottom 0.25s linear;
+        overflow: hidden;
+    }
+        .media p {
+            /* Text under videos title */
+            margin-bottom: 0.3rem;
+        }
+
+    .vid-img {
+        max-width: 200px;
+        /*max-height: 133px;*/
+    }
+
+    .vid {
+        width: 100%;
+    }
+
+    .modal-content {
+        background-color: #2c3544;
+    }
+
+    .modal-header,
+    .modal-footer {
+        border-color: #515354;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            let searchbox = $('#admin-search');
+            let deleteModal = $('.modal-del-btn');
+            let editModal = $('#edt-submit');
+            let closeAlert = $('#alert-close');
+            let appendage = $('.appendage');
+
+            let statusMessageDiv = $('#alert-status-msg');
+
+            let searchUrl = '/Admin/Videos/Manage?handler=FindMatch';
+            let delUrl = '/Admin/Videos/Manage?handler=Delete';
+            let edtUrl = '/Admin/Videos/Manage?handler=Edit';
+
+            let rvt = $('input[name="__RequestVerificationToken"]').val();
+
+            searchbox.removeClass('hide');
+            searchbox.prop("placeholder", "Search video...");
+
+            /* Sets the Videotitle for the Delete Modal
+             *  and forwards the current video ID for deletion.
+             */
+            $('.appendage').on('click', '.delete-btn', function (e) {
+                e.preventDefault();
+
+                let vidTitle = $(this).siblings('.vid-title-storage').val();
+                let vidId = $(this).siblings('.vid-id-storage').val();
+
+                $('.display-vid-title').text(vidTitle);
+                $('.vid-id-send').val(vidId);
+            });
+
+            /*
+             * Sets the input fields on the Edit-Modal for the current video.
+             * Forwards the video-id of the selected video for editing.
+             */
+            $('.appendage').on('click', '.edit-btn', function (e) {
+                e.preventDefault();
+
+                // Store current ones
+                let vidId = $(this).siblings('.vid-id-storage').val();
+                let vidTitle = $(this).siblings('.vid-title-storage').val();
+                let vidDesc = $(this).siblings('.vid-desc-storage').val();
+                let vidVisibility = $(this).siblings('.vid-visibility-storage').val() === 'true';
+
+                // Set current ones
+                $('#edt-vid-title').prop('placeholder', vidTitle);
+                $('#edt-vid-title').val(vidTitle);
+
+                $('#edt-vid-desc').prop('placeholder', vidDesc);
+                $('#edt-vid-desc').val(vidDesc);
+
+                $('#edt-vid-visibility').prop("checked", vidVisibility);
+                $('#edt-id-send').val(vidId);
+
+            });
+
+            searchbox.keyup(function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    type: "GET",
+                    url: searchUrl,
+                    data: { videoTitle: searchbox.val() },
+                    contentType: "application/json; charset=utf-8",
+
+                    dataType: "json",
+
+                    success: function (response) {
+
+                        let videos = response;
+
+                        appendage.empty();
+
+                        if (videos.length > 0) {
+                            for (var i = 0; i < videos.length; i++) {
+
+                                appendage.append(`
+                                    <div id="`+ videos[i].videoId +`" class="media mb-5 col-12">
+                                        <img class="vid-img mr-3" src="`+ videos[i].videoImage +`" alt="Video Thumbnail" >
+                                        <div class="media-body">
+                                            <h5 class="mt-0">`+ videos[i].videoTitle +`</h5>
+                                            <p>`+ videos[i].videoDescription + `</p>`
+
+                                    + (videos[i].isPrivate ? `<p><i class="fas fa-lock"></i></p>` : `<p><i class="fas fa-lock-open"></i></p>` )+
+
+                                            `<p>Uploaded by: `+ videos[i].applicationUser.userName +`</p>
+                                            <div class="mt-2 d-block">
+                                                <button class="btn btn-sm btn-outline-warning edit-btn" data-toggle="modal" data-target="#EditModal">
+                                                     <i class="fas fa-pencil-alt"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning delete-btn" data-toggle="modal" data-target="#DeleteModal">
+                                                     <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                                <input class="vid-id-storage" type="hidden" value="`+ videos[i].videoId +`" />
+                                                <input class="vid-title-storage" type="hidden" value="`+ videos[i].videoTitle+`" />
+                                                <input class="vid-desc-storage" type="hidden" value="`+ videos[i].videoDescription +`" />
+                                                <input class="vid-visibility-storage" type="hidden" value="`+ videos[i].isPrivate +`" />
+                                            </div>
+                                        </div>
+                                    </div>`
+                                );
+                            }
+                        }
+                        else {
+                            appendage.append('<h3>No matches found...</h3>');
+                        }
+                    }
+                });
+            });
+
+            deleteModal.click(function (e) {
+                e.preventDefault();
+
+                statusMessageDiv.collapse('hide');
+
+                $.ajax({
+                    type: "POST",
+                    url: delUrl,
+                    data: {
+                        __RequestVerificationToken: rvt,
+                        id: $('.vid-id-send').val()
+                    },
+
+                    dataType: "json",
+
+                    success: function (response) {
+
+                        let id = response.split(' ');
+
+                        $('#DeleteModal').modal('hide');
+
+                        $('#DeleteModal').one('hidden.bs.modal', function (e) {
+
+                            $('#' + id[0]).css('max-height', '0');
+                            $('#' + id[0]).css('margin-bottom', '0');
+
+                            setTimeout(() => {
+                                $('#status-msg').html(response);
+
+                                statusMessageDiv.collapse('toggle');
+
+                                statusMessageDiv.on('shown.bs.collapse', function () {
+                                    $(window).scrollTop(0);
+                                })
+
+                            }, 550);
+                        });
+                    }
+                });
+            });
+
+            editModal.click(function (e) {
+                e.preventDefault();
+
+                statusMessageDiv.collapse('hide');
+
+                $.ajax({
+                    type: "POST",
+                    url: edtUrl,
+                    data: {
+                        __RequestVerificationToken: rvt,
+                        id: $('#edt-id-send').val(),
+                        title: $('#edt-vid-title').val(),
+                        desc: $('#edt-vid-desc').val(),
+                        isPrivate: $('#edt-vid-visibility').is(':checked')
+                    },
+
+                    dataType: 'json',
+
+                    success: function (response) {
+                        let id = response.split(' ')[0];
+
+                        $('#EditModal').modal('hide');
+
+                        $('#EditModal').one('hidden.bs.modal', function (e) {
+
+                            $('#' + id).css("max-height", "0");
+
+                            $('#status-msg').html(response);
+
+                            setTimeout(function () {
+                                $.get(
+                                    '/Admin/Videos/Manage?handler=ReturnEdited',
+                                    { id: id },
+
+                                    function (result) {
+                                        let video = result;
+
+                                        var content = $(`
+                                            <img class="vid-img mr-3" src="`+ video.videoImage + `" alt="Video Thumbnail" >
+                                                <div class="media-body">
+                                                    <h5 class="mt-0">`+ video.videoTitle + `</h5>
+                                                    <p>`+ video.videoDescription + `</p>`
+
+                                            + (video.isPrivate ? `<p><i class="fas fa-lock"></i></p>` : `<p><i class="fas fa-lock-open"></i></p>`) +
+
+                                            `<p>Uploaded by: ` + video.applicationUser.userName + `</p>
+                                                    <div class="mt-2 d-block">
+                                                        <button type="button" class="btn btn-sm btn-outline-warning edit-btn" data-toggle="modal" data-target="#EditModal">
+                                                          <i class="fas fa-pencil-alt"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-outline-warning delete-btn" data-toggle="modal" data-target="#DeleteModal">
+                                                          <i class="fas fa-trash-alt"></i>
+                                                        </button>
+                                                        <input class="vid-id-storage" type="hidden" value="`+ video.videoId + `" />
+                                                        <input class="vid-title-storage" type="hidden" value="`+ video.videoTitle + `" />
+                                                        <input class="vid-desc-storage" type="hidden" value="`+ video.videoDescription + `" />
+                                                        <input class="vid-visibility-storage" type="hidden" value="`+ (video.isPrivate ? 'true' : 'false') + `" />
+                                                    </div>
+                                                </div>
+                                            `);
+
+                                        $('#' + id).html(content);
+                                    },
+                                    'json'
+                                );
+
+                                setTimeout(function () {
+                                    $('#' + id).css("max-height", "200" + "px");
+
+                                    setTimeout(() => {
+                                        statusMessageDiv.collapse('toggle');
+                                    }, 500);
+
+                                }, 100);
+
+                            }, 350);
+
+                        });
+                    }
+                });
+            });
+
+            closeAlert.click(function (e) {
+                e.preventDefault();
+                statusMessageDiv.collapse('hide');
+            });
+        });
+    </script>
+}
